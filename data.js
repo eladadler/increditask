@@ -143,6 +143,39 @@
     ];
   }
 
+  // ---- cloud sync (Supabase) ----
+  async function loadFromCloud(){
+    try{
+      const { data, error } = await window._sb.from('projects').select('data');
+      if(error) throw error;
+      return data.map(r => r.data);
+    }catch(e){
+      console.warn('[PM] cloud load failed, using localStorage:', e.message);
+      return null;
+    }
+  }
+  async function upsertToCloud(project){
+    try{
+      const { error } = await window._sb.from('projects').upsert({
+        id: project.id,
+        data: project,
+        archived: !!project.completedAt,
+        updated_at: new Date().toISOString()
+      });
+      if(error) throw error;
+    }catch(e){
+      console.warn('[PM] cloud upsert failed:', e.message);
+    }
+  }
+  async function deleteFromCloud(id){
+    try{
+      const { error } = await window._sb.from('projects').delete().eq('id', id);
+      if(error) throw error;
+    }catch(e){
+      console.warn('[PM] cloud delete failed:', e.message);
+    }
+  }
+
   // ---- icons (lucide-style, stroke) ----
   const I = {
     today:'<path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M12 14v3M9 14h6" stroke-linecap="round"/>',
@@ -176,6 +209,7 @@
 
   window.PM = {
     CATEGORIES, URGENCY, today, parseDate, daysUntil, fmtDate, fmtFull,
-    deadlineInfo, fmtMoney, sortProjects, progress, load, save, uid, seed, icon, I, STORE_KEY
+    deadlineInfo, fmtMoney, sortProjects, progress, load, save, uid, seed, icon, I, STORE_KEY,
+    loadFromCloud, upsertToCloud, deleteFromCloud
   };
 })();

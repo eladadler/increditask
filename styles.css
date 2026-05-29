@@ -385,3 +385,9 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .empty-ico .ico{ width:64px; height:64px; }
 .expand-ico{ width:18px; height:18px; }
 .fade-in{ }
+
+/* cloud sync toast */
+.sync-toast{ position:fixed; top:18px; inset-inline-start:50%; transform:translateX(50%); background:var(--surface); border:1.5px solid var(--line); border-radius:20px; padding:6px 14px; font-size:12.5px; font-weight:600; color:var(--ink-2); box-shadow:0 2px 12px oklch(0 0 0 / .1); z-index:300; pointer-events:none; opacity:1; transition:opacity .4s; }
+.sync-toast.synced{ color:var(--u-low); border-color:var(--u-low); animation: fadeout 2s forwards; }
+.sync-toast.error{ color:var(--u-high); border-color:var(--u-high); }
+@keyframes fadeout{ 0%{opacity:1} 60%{opacity:1} 100%{opacity:0} }

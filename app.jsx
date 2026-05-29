@@ -25,17 +25,49 @@ function App(){
   const [urgFilter, setUrgFilter] = useState("all");
   const [modal, setModal] = useState(null);
   const [editTarget, setEditTarget] = useState(null);
+  const [cloudStatus, setCloudStatus] = useState("idle"); // idle | loading | synced | error
 
+  // save to localStorage on every change
   useEffect(()=>{ PM.save(projects); }, [projects]);
 
-  const update = (proj)=> setProjects(ps=> ps.map(p=> p.id===proj.id ? proj : p));
-  const complete = (proj)=> setProjects(ps=> ps.map(p=> p.id===proj.id
-    ? { ...p, archived:true, completedAt: new Date().toISOString().slice(0,10) } : p));
-  const restore = (proj)=> setProjects(ps=> ps.map(p=> p.id===proj.id ? { ...p, archived:false, completedAt:null } : p));
-  const remove = (proj)=> { if(confirm(`למחוק את "${proj.title}"?`)) setProjects(ps=> ps.filter(p=> p.id!==proj.id)); };
+  // load from Supabase on mount — overrides localStorage if cloud has data
+  useEffect(()=>{
+    setCloudStatus("loading");
+    PM.loadFromCloud().then(cloudData=>{
+      if(cloudData !== null){
+        setProjects(cloudData);
+        PM.save(cloudData);
+        setCloudStatus("synced");
+      } else {
+        setCloudStatus("error");
+      }
+    });
+  }, []);
+
+  const update = (proj)=>{
+    setProjects(ps=> ps.map(p=> p.id===proj.id ? proj : p));
+    PM.upsertToCloud(proj);
+  };
+  const complete = (proj)=>{
+    const updated = { ...proj, archived:true, completedAt: new Date().toISOString().slice(0,10) };
+    setProjects(ps=> ps.map(p=> p.id===proj.id ? updated : p));
+    PM.upsertToCloud(updated);
+  };
+  const restore = (proj)=>{
+    const updated = { ...proj, archived:false, completedAt:null };
+    setProjects(ps=> ps.map(p=> p.id===proj.id ? updated : p));
+    PM.upsertToCloud(updated);
+  };
+  const remove = (proj)=>{
+    if(confirm(`למחוק את "${proj.title}"?`)){
+      setProjects(ps=> ps.filter(p=> p.id!==proj.id));
+      PM.deleteFromCloud(proj.id);
+    }
+  };
   const edit = (proj)=> { setEditTarget(proj); setModal("edit"); };
   const saveProject = (proj)=>{
     setProjects(ps=> ps.some(p=>p.id===proj.id) ? ps.map(p=> p.id===proj.id ? proj : p) : [...ps, proj]);
+    PM.upsertToCloud(proj);
     setModal(null); setEditTarget(null);
   };
 
@@ -93,6 +125,10 @@ function App(){
       </aside>
 
       <button className="fab" onClick={()=>{ setEditTarget(null); setModal("new"); }}><Icon name="plus" /></button>
+
+      {cloudStatus==="loading" && <div className="sync-toast">☁ מסנכרן…</div>}
+      {cloudStatus==="synced"  && <div className="sync-toast synced" key={Date.now()}>☁ מסונכרן</div>}
+      {cloudStatus==="error"   && <div className="sync-toast error">⚠ נכשל לסנכרן</div>}
 
       {modal && <ProjectModal initial={editTarget} onSave={saveProject} onClose={()=>{ setModal(null); setEditTarget(null); }} />}
 
