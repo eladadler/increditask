@@ -386,6 +386,14 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .expand-ico{ width:18px; height:18px; }
 .fade-in{ }
 
+/* drag and drop */
+.drag-item{ cursor: grab; }
+.drag-item:active{ cursor: grabbing; }
+.drag-chosen .card{ box-shadow: 0 12px 32px oklch(0 0 0 / .18); transform: rotate(-0.8deg) scale(1.02); transition: transform .15s, box-shadow .15s; }
+.drag-ghost .card{ opacity: 0.25; border: 2px dashed var(--accent); background: var(--accent-soft); border-radius: var(--r-lg); }
+.drag-ghost .card *{ visibility: hidden; }
+.proj-list[data-urgency]{ min-height: 4px; transition: background .15s; }
+
 /* required field indicators */
 .req-star{ color: var(--u-high); font-size:15px; line-height:1; margin-inline-start:2px; }
 .input-error{ border-color: var(--u-high) !important; background: var(--u-high-soft) !important; }

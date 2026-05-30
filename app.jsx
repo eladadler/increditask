@@ -85,6 +85,29 @@ function App(){
     if(isNew) setView("projects"); // navigate to projects so user sees the new card
   };
 
+  const reorder = (draggedId, toGroup, toIdx) => {
+    setProjects(ps => {
+      const dragged = ps.find(p => p.id === draggedId);
+      if(!dragged) return ps;
+      const groupItems = ps
+        .filter(p => p.urgency === toGroup && p.id !== draggedId)
+        .sort((a, b) => (a.manualOrder ?? 999999) - (b.manualOrder ?? 999999));
+      let newOrder;
+      if(toIdx === 0){
+        newOrder = (groupItems[0]?.manualOrder ?? 1000) - 1000;
+      } else if(toIdx >= groupItems.length){
+        newOrder = (groupItems[groupItems.length-1]?.manualOrder ?? 0) + 1000;
+      } else {
+        const prev = groupItems[toIdx-1].manualOrder ?? (toIdx-1)*1000;
+        const next = groupItems[toIdx].manualOrder ?? toIdx*1000;
+        newOrder = (prev + next) / 2;
+      }
+      const updated = { ...dragged, urgency: toGroup, manualOrder: newOrder };
+      PM.upsertToCloud(updated);
+      return ps.map(p => p.id === draggedId ? updated : p);
+    });
+  };
+
   const handlers = { onUpdate:update, onComplete:complete, onEdit:edit, onDelete:remove, onRestore:restore };
 
   const active = projects.filter(p=>!p.archived);
@@ -111,7 +134,8 @@ function App(){
           projects={active} search={search} setSearch={setSearch}
           catFilter={catFilter} setCatFilter={setCatFilter}
           urgFilter={urgFilter} setUrgFilter={setUrgFilter}
-          onAdd={()=>{ setEditTarget(null); setModal("new"); }} handlers={handlers} />}
+          onAdd={()=>{ setEditTarget(null); setModal("new"); }}
+          handlers={handlers} onReorder={reorder} />}
         {view==="income" && <IncomeView projects={projects} />}
         {view==="archive" && <ArchiveView projects={archived} handlers={handlers} />}
       </main>
@@ -160,7 +184,7 @@ function App(){
 }
 
 /* ---- Projects view ---- */
-function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, urgFilter, setUrgFilter, onAdd, handlers }){
+function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, urgFilter, setUrgFilter, onAdd, handlers, onReorder }){
   let list = projects;
   if(search.trim()){
     const q = search.trim().toLowerCase();
@@ -169,19 +193,55 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
   if(catFilter!=="all") list = list.filter(p=> p.category===catFilter);
   if(urgFilter!=="all") list = list.filter(p=> p.urgency===urgFilter);
 
-  const sorted = PM.sortProjects(list);
   const groups = [
-    { key:"high", label:"דחיפות גבוהה", items: sorted.filter(p=>p.urgency==="high") },
-    { key:"mid",  label:"דחיפות בינונית", items: sorted.filter(p=>p.urgency==="mid") },
-    { key:"low",  label:"דחיפות נמוכה", items: sorted.filter(p=>p.urgency==="low") },
-  ].filter(g=> g.items.length);
+    { key:"high", label:"דחיפות גבוהה" },
+    { key:"mid",  label:"דחיפות בינונית" },
+    { key:"low",  label:"דחיפות נמוכה" },
+  ].map(g => ({
+    ...g,
+    items: list
+      .filter(p=> p.urgency===g.key)
+      .sort((a,b)=> (a.manualOrder??999999)-(b.manualOrder??999999))
+  })).filter(g=> g.items.length);
+
+  // SortableJS drag-and-drop
+  const reorderRef = useRef(onReorder);
+  reorderRef.current = onReorder;
+
+  const listRef = useCallback((el) => {
+    if(!el || el._sortable) return;
+    let dragOriginParent = null;
+    let dragOriginNext   = null;
+    el._sortable = Sortable.create(el, {
+      group:            'projects-dnd',
+      animation:        200,
+      ghostClass:       'drag-ghost',
+      chosenClass:      'drag-chosen',
+      delay:            120,
+      delayOnTouchOnly: true,
+      touchStartThreshold: 8,
+      onStart(evt){
+        dragOriginParent = evt.item.parentNode;
+        dragOriginNext   = evt.item.nextSibling;
+      },
+      onEnd(evt){
+        // Revert DOM — let React re-render from state
+        dragOriginParent.insertBefore(evt.item, dragOriginNext);
+        dragOriginParent = null; dragOriginNext = null;
+        const id      = evt.item.dataset.projectId;
+        const toGroup = evt.to.dataset.urgency;
+        const toIdx   = evt.newDraggableIndex ?? 0;
+        reorderRef.current(id, toGroup, toIdx);
+      }
+    });
+  }, []);
 
   return (
     <div>
       <div className="page-head">
         <div>
           <div className="page-title">פרוייקטים</div>
-          <div className="page-sub">{projects.length} פרוייקטים פעילים · ממויינים לפי דחיפות ודד-ליין</div>
+          <div className="page-sub">{projects.length} פרוייקטים פעילים · גרור כדי לסדר מחדש</div>
         </div>
       </div>
 
@@ -202,7 +262,7 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
         </div>
       </div>
 
-      {sorted.length ? (
+      {list.length ? (
         <div>
           {groups.map(g=>(
             <div key={g.key}>
@@ -212,8 +272,12 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
                 <span className="n" style={{background:`var(--u-${g.key})`}}>{g.items.length}</span>
                 <span className="ln"></span>
               </div>
-              <div className="proj-list">
-                {g.items.map(p=> <ProjectCard key={p.id} project={p} {...handlers} />)}
+              <div className="proj-list" data-urgency={g.key} ref={listRef}>
+                {g.items.map(p=> (
+                  <div key={p.id} data-project-id={p.id} className="drag-item">
+                    <ProjectCard project={p} {...handlers} />
+                  </div>
+                ))}
               </div>
             </div>
           ))}

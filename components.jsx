@@ -1,5 +1,5 @@
 /* ===== shared components ===== */
-const { useState, useEffect, useRef, useMemo } = React;
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
 const PM = window.PM;
 
 function Icon({ name, cls }){
