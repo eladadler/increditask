@@ -38,14 +38,9 @@ function App(){
         // network/auth error — stay on localStorage
         setCloudStatus("error");
       } else if(cloudData.length > 0){
-        // cloud has data — merge: keep anything user added before response arrived
-        setProjects(current => {
-          const cloudIds = new Set(cloudData.map(p => p.id));
-          const userAdded = current.filter(p => !cloudIds.has(p.id));
-          const merged = [...cloudData, ...userAdded];
-          PM.save(merged);
-          return merged;
-        });
+        // cloud is the source of truth — replace local state completely
+        setProjects(cloudData);
+        PM.save(cloudData);
         setCloudStatus("synced");
       } else {
         // cloud is empty — upload current local data to cloud
