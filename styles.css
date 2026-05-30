@@ -50,7 +50,7 @@
 }
 
 *{ box-sizing: border-box; margin: 0; padding: 0; }
-html,body{ height:100%; }
+html,body{ height:100%; overflow-x:hidden; }
 body{
   font-family: "Rubik", system-ui, sans-serif;
   background: var(--bg);
@@ -404,3 +404,8 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .sync-toast.synced{ color:var(--u-low); border-color:var(--u-low); animation: fadeout 2s forwards; }
 .sync-toast.error{ color:var(--u-high); border-color:var(--u-high); }
 @keyframes fadeout{ 0%{opacity:1} 60%{opacity:1} 100%{opacity:0} }
+
+/* prevent Chrome Android auto-zoom on input focus (font-size < 16px triggers zoom) */
+@media (max-width: 768px) {
+  input, textarea, select { font-size: 16px !important; }
+}
