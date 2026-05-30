@@ -38,9 +38,14 @@ function App(){
         // network/auth error — stay on localStorage
         setCloudStatus("error");
       } else if(cloudData.length > 0){
-        // cloud has data — use it as source of truth
-        setProjects(cloudData);
-        PM.save(cloudData);
+        // cloud has data — merge: keep anything user added before response arrived
+        setProjects(current => {
+          const cloudIds = new Set(cloudData.map(p => p.id));
+          const userAdded = current.filter(p => !cloudIds.has(p.id));
+          const merged = [...cloudData, ...userAdded];
+          PM.save(merged);
+          return merged;
+        });
         setCloudStatus("synced");
       } else {
         // cloud is empty — upload current local data to cloud
@@ -73,9 +78,11 @@ function App(){
   };
   const edit = (proj)=> { setEditTarget(proj); setModal("edit"); };
   const saveProject = (proj)=>{
+    const isNew = !projects.some(p=> p.id===proj.id);
     setProjects(ps=> ps.some(p=>p.id===proj.id) ? ps.map(p=> p.id===proj.id ? proj : p) : [...ps, proj]);
     PM.upsertToCloud(proj);
     setModal(null); setEditTarget(null);
+    if(isNew) setView("projects"); // navigate to projects so user sees the new card
   };
 
   const handlers = { onUpdate:update, onComplete:complete, onEdit:edit, onDelete:remove, onRestore:restore };
