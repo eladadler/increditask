@@ -145,6 +145,21 @@
     ];
   }
 
+  // ---- custom categories ----
+  const BUILTIN_CATS = new Set(['design','dev','consult','content','marketing','other']);
+  const CATS_STORE = "pm_cats_v1";
+  function loadCustomCats(){
+    try{ return JSON.parse(localStorage.getItem(CATS_STORE)||'{}'); }catch(e){ return {}; }
+  }
+  function saveCustomCats(obj){
+    localStorage.setItem(CATS_STORE, JSON.stringify(obj));
+  }
+  function applyCustomCats(obj){
+    Object.keys(CATEGORIES).forEach(k=>{ if(!BUILTIN_CATS.has(k)) delete CATEGORIES[k]; });
+    Object.entries(obj).forEach(([k,v])=>{ CATEGORIES[k] = v; });
+  }
+  applyCustomCats(loadCustomCats()); // apply on init
+
   // ---- cloud sync (Supabase) ----
   async function loadFromCloud(){
     try{
@@ -212,6 +227,7 @@
   window.PM = {
     CATEGORIES, URGENCY, today, parseDate, daysUntil, fmtDate, fmtFull,
     deadlineInfo, fmtMoney, sortProjects, progress, load, save, uid, seed, icon, I, STORE_KEY,
-    loadFromCloud, upsertToCloud, deleteFromCloud
+    loadFromCloud, upsertToCloud, deleteFromCloud,
+    loadCustomCats, saveCustomCats, applyCustomCats, BUILTIN_CATS,
   };
 })();
