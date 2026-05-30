@@ -2,6 +2,7 @@
 function ProjectModal({ initial, onSave, onClose }){
   const editing = !!initial;
   const [title, setTitle] = useState(initial?.title || "");
+  const [titleTouched, setTitleTouched] = useState(false);
   const [client, setClient] = useState(initial?.client || "");
   const [category, setCategory] = useState(initial?.category || "dev");
   const [urgency, setUrgency] = useState(initial?.urgency || "mid");
@@ -37,10 +38,14 @@ function ProjectModal({ initial, onSave, onClose }){
         </div>
         <div className="modal-body">
           <div className="field">
-            <label>שם הפרוייקט</label>
-            <input ref={titleRef} value={title} onChange={e=>setTitle(e.target.value)}
+            <label>שם הפרוייקט <span className="req-star">*</span></label>
+            <input ref={titleRef} value={title}
+              onChange={e=>{ setTitle(e.target.value); setTitleTouched(true); }}
+              onBlur={()=>setTitleTouched(true)}
               placeholder="לדוגמה: אתר תדמית — סטודיו נובה"
+              className={titleTouched && !title.trim() ? "input-error" : ""}
               onKeyDown={e=>{ if(e.key==="Enter" && (e.metaKey||e.ctrlKey)) submit(); }} />
+            {titleTouched && !title.trim() && <span className="field-err">שדה חובה</span>}
           </div>
 
           <div className="field-row">

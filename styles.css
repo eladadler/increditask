@@ -386,6 +386,11 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .expand-ico{ width:18px; height:18px; }
 .fade-in{ }
 
+/* required field indicators */
+.req-star{ color: var(--u-high); font-size:15px; line-height:1; margin-inline-start:2px; }
+.input-error{ border-color: var(--u-high) !important; background: var(--u-high-soft) !important; }
+.field-err{ font-size:12px; color: var(--u-high); font-weight:600; margin-top:4px; display:block; }
+
 /* cloud sync toast */
 .sync-toast{ position:fixed; top:18px; inset-inline-start:50%; transform:translateX(50%); background:var(--surface); border:1.5px solid var(--line); border-radius:20px; padding:6px 14px; font-size:12.5px; font-weight:600; color:var(--ink-2); box-shadow:0 2px 12px oklch(0 0 0 / .1); z-index:300; pointer-events:none; opacity:1; transition:opacity .4s; }
 .sync-toast.synced{ color:var(--u-low); border-color:var(--u-low); animation: fadeout 2s forwards; }
