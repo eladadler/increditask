@@ -30,16 +30,23 @@ function App(){
   // save to localStorage on every change
   useEffect(()=>{ PM.save(projects); }, [projects]);
 
-  // load from Supabase on mount — overrides localStorage if cloud has data
+  // load from Supabase on mount
   useEffect(()=>{
     setCloudStatus("loading");
     PM.loadFromCloud().then(cloudData=>{
-      if(cloudData !== null){
+      if(cloudData === null){
+        // network/auth error — stay on localStorage
+        setCloudStatus("error");
+      } else if(cloudData.length > 0){
+        // cloud has data — use it as source of truth
         setProjects(cloudData);
         PM.save(cloudData);
         setCloudStatus("synced");
       } else {
-        setCloudStatus("error");
+        // cloud is empty — upload current local data to cloud
+        const local = PM.load();
+        Promise.all(local.map(p => PM.upsertToCloud(p)))
+          .then(()=> setCloudStatus("synced"));
       }
     });
   }, []);
