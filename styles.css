@@ -392,12 +392,28 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .fade-in{ }
 
 /* drag and drop */
-.drag-item{ cursor: grab; }
-.drag-item:active{ cursor: grabbing; }
-.drag-chosen .card{ box-shadow: 0 12px 32px oklch(0 0 0 / .18); transform: rotate(-0.8deg) scale(1.02); transition: transform .15s, box-shadow .15s; }
-.drag-ghost .card{ opacity: 0.25; border: 2px dashed var(--accent); background: var(--accent-soft); border-radius: var(--r-lg); }
-.drag-ghost .card *{ visibility: hidden; }
-.proj-list[data-urgency]{ min-height: 4px; transition: background .15s; }
+.drag-item{ position: relative; }
+.drag-handle{
+  display:flex; align-items:center; justify-content:center;
+  padding:3px 2px; border-radius:5px; line-height:0;
+  color: var(--ink-3); cursor: grab;
+  opacity:0; transition: opacity .18s, background .14s;
+}
+.drag-handle .ico{ width:15px; height:15px; }
+.card:hover .drag-handle{ opacity:0.38; }
+.drag-handle:hover{ opacity:0.7 !important; background: var(--surface-2); }
+.drag-chosen .drag-handle{ opacity:1 !important; cursor:grabbing; }
+.drag-chosen .card{
+  box-shadow: 0 14px 36px oklch(0 0 0 / .16);
+  transform: rotate(-0.6deg) scale(1.015);
+  transition: transform .15s, box-shadow .15s;
+}
+.drag-ghost .card{
+  opacity:0.22; border:2px dashed var(--accent);
+  background:var(--accent-soft); border-radius: var(--r-lg);
+}
+.drag-ghost .card *{ visibility:hidden; }
+.proj-list[data-urgency]{ min-height:4px; transition:background .15s; }
 
 /* required field indicators */
 .req-star{ color: var(--u-high); font-size:15px; line-height:1; margin-inline-start:2px; }

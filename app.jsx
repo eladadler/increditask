@@ -193,6 +193,50 @@ function App(){
   );
 }
 
+/* ---- Per-group sortable list ---- */
+function SortableGroup({ group, handlers, onReorder }){
+  const listEl = useRef(null);
+  const reorderRef = useRef(onReorder);
+  reorderRef.current = onReorder;
+
+  useEffect(()=>{
+    const el = listEl.current;
+    if(!el) return;
+    const s = Sortable.create(el, {
+      group:               'projects-dnd',
+      handle:              '.drag-handle',
+      animation:           180,
+      ghostClass:          'drag-ghost',
+      chosenClass:         'drag-chosen',
+      delay:               150,
+      delayOnTouchOnly:    true,
+      touchStartThreshold: 4,
+      onEnd(evt){
+        const id      = evt.item.dataset.projectId;
+        const toGroup = evt.to.dataset.urgency;
+        const toIdx   = evt.newDraggableIndex ?? 0;
+        // Cross-group: revert DOM first so React can re-render cleanly
+        if(evt.from !== evt.to){
+          const ref = evt.from.children[evt.oldDraggableIndex] || null;
+          evt.from.insertBefore(evt.item, ref);
+        }
+        reorderRef.current(id, toGroup, toIdx);
+      }
+    });
+    return ()=> s.destroy();
+  }, []);
+
+  return (
+    <div className="proj-list" data-urgency={group.key} ref={listEl}>
+      {group.items.map(p=>(
+        <div key={p.id} data-project-id={p.id} className="drag-item">
+          <ProjectCard project={p} {...handlers} draggable />
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ---- Projects view ---- */
 function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, urgFilter, setUrgFilter, onAdd, handlers, onReorder }){
   let list = projects;
@@ -214,45 +258,12 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
       .sort((a,b)=> (a.manualOrder??999999)-(b.manualOrder??999999))
   })).filter(g=> g.items.length);
 
-  // SortableJS drag-and-drop
-  const reorderRef = useRef(onReorder);
-  reorderRef.current = onReorder;
-
-  const listRef = useCallback((el) => {
-    if(!el || el._sortable) return;
-    el._sortable = Sortable.create(el, {
-      group:            'projects-dnd',
-      animation:        200,
-      ghostClass:       'drag-ghost',
-      chosenClass:      'drag-chosen',
-      delay:            200,
-      delayOnTouchOnly: true,
-      touchStartThreshold: 18,
-      onEnd(evt){
-        const id      = evt.item.dataset.projectId;
-        const toGroup = evt.to.dataset.urgency;
-        const toIdx   = evt.newDraggableIndex ?? 0;
-        // Same-group reorder: SortableJS DOM already matches target order —
-        // React reconciliation is a no-op, no revert needed.
-        // Cross-group move: SortableJS placed the element in a different list,
-        // but React still owns the original DOM tree and will crash trying to
-        // remove the element from its old parent. Revert the DOM first so
-        // React can cleanly re-render the element in the correct group.
-        if(evt.from !== evt.to){
-          const ref = evt.from.children[evt.oldDraggableIndex] || null;
-          evt.from.insertBefore(evt.item, ref);
-        }
-        reorderRef.current(id, toGroup, toIdx);
-      }
-    });
-  }, []);
-
   return (
     <div>
       <div className="page-head">
         <div>
           <div className="page-title">פרוייקטים</div>
-          <div className="page-sub">{projects.length} פרוייקטים פעילים · גרור כדי לסדר מחדש</div>
+          <div className="page-sub">{projects.length} פרוייקטים פעילים · גרור לשינוי סדר</div>
         </div>
       </div>
 
@@ -283,13 +294,7 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
                 <span className="n" style={{background:`var(--u-${g.key})`}}>{g.items.length}</span>
                 <span className="ln"></span>
               </div>
-              <div className="proj-list" data-urgency={g.key} ref={listRef}>
-                {g.items.map(p=> (
-                  <div key={p.id} data-project-id={p.id} className="drag-item">
-                    <ProjectCard project={p} {...handlers} />
-                  </div>
-                ))}
-              </div>
+              <SortableGroup group={g} handlers={handlers} onReorder={onReorder} />
             </div>
           ))}
         </div>

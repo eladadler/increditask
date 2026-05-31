@@ -92,7 +92,7 @@ function SubtaskList({ project, onChange }){
 }
 
 /* ---- project card ---- */
-function ProjectCard({ project, onUpdate, onComplete, onEdit, onDelete, onRestore, archived, defaultOpen }){
+function ProjectCard({ project, onUpdate, onComplete, onEdit, onDelete, onRestore, archived, defaultOpen, draggable }){
   const [open, setOpen] = useState(!!defaultOpen);
   const [confirming, setConfirming] = useState(false);
   const p = project;
@@ -134,6 +134,11 @@ function ProjectCard({ project, onUpdate, onComplete, onEdit, onDelete, onRestor
           {!archived && prog && <ProgressBar p={prog} />}
         </div>
         <div className="card-right">
+          {draggable && (
+            <span className="drag-handle" onClick={e=>e.stopPropagation()} title="גרור לשינוי סדר">
+              <Icon name="grip" />
+            </span>
+          )}
           <Icon name="chevron" cls="expand-ico" />
         </div>
       </div>
