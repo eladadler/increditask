@@ -50,7 +50,8 @@
 }
 
 *{ box-sizing: border-box; margin: 0; padding: 0; }
-html,body{ height:100%; overflow-x:hidden; }
+html,body{ height:100%; }
+body{ overscroll-behavior-y: contain; }
 body{
   font-family: "Rubik", system-ui, sans-serif;
   background: var(--bg);
@@ -69,7 +70,7 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 *::-webkit-scrollbar-thumb:hover{ background: var(--ink-3); background-clip: padding-box; }
 
 /* ===== shell ===== */
-.app{ display:block; min-height:100vh; }
+.app{ display:block; min-height:100vh; overflow-x:hidden; }
 .main{ padding: 20px 16px 100px; max-width: 430px; margin: 0 auto; }
 
 /* ===== bottom nav bar (always) ===== */
@@ -130,7 +131,7 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .fchip .dot{ width:9px; height:9px; border-radius:99px; display:inline-block; margin-inline-end:7px; vertical-align:middle; }
 
 /* ===== project card ===== */
-.proj-list{ display:flex; flex-direction:column; gap: calc(14px * var(--pad)); }
+.proj-list{ display:flex; flex-direction:column; gap: calc(14px * var(--pad)); touch-action: pan-y; }
 .card{
   background: var(--surface); border:2px solid var(--line);
   border-radius: var(--r-lg); box-shadow: var(--shadow-sm);

@@ -290,14 +290,18 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
       animation:        200,
       ghostClass:       'drag-ghost',
       chosenClass:      'drag-chosen',
-      delay:            120,
+      delay:            200,
       delayOnTouchOnly: true,
-      touchStartThreshold: 8,
+      touchStartThreshold: 18,
       onStart(evt){
         dragOriginParent = evt.item.parentNode;
         dragOriginNext   = evt.item.nextSibling;
+        // lock body scroll while dragging
+        document.body.style.overflow = 'hidden';
       },
       onEnd(evt){
+        // restore scroll
+        document.body.style.overflow = '';
         // Revert DOM — let React re-render from state
         dragOriginParent.insertBefore(evt.item, dragOriginNext);
         dragOriginParent = null; dragOriginNext = null;
