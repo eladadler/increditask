@@ -103,6 +103,11 @@ function ProjectCard({ project, onUpdate, onComplete, onEdit, onDelete, onRestor
 
   return (
     <div className={"card urg-"+p.urgency+(open?" open":"")}>
+      {draggable && (
+        <span className="drag-handle" onPointerDown={e=>e.stopPropagation()} onClick={e=>e.stopPropagation()} title="גרור לשינוי סדר">
+          <Icon name="grip" />
+        </span>
+      )}
       {confirming && (
         <div className="confirm-overlay" onClick={()=>setConfirming(false)}>
           <div className="confirm-box" onClick={e=>e.stopPropagation()}>
@@ -116,11 +121,6 @@ function ProjectCard({ project, onUpdate, onComplete, onEdit, onDelete, onRestor
         </div>
       )}
       <div className="card-top" onClick={()=>setOpen(o=>!o)}>
-        {draggable && (
-          <span className="drag-handle" onClick={e=>e.stopPropagation()} title="גרור לשינוי סדר">
-            <Icon name="grip" />
-          </span>
-        )}
         {archived && (
           <span className="card-check done" style={{cursor:"default"}}><Icon name="check" /></span>
         )}

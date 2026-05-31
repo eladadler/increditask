@@ -147,7 +147,7 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .card.urg-low{ border-color: color-mix(in oklch, var(--u-low) 35%, white); }
 .card.urg-low::before{ background: var(--u-low); }
 
-.card-top{ display:flex; align-items:flex-start; gap:15px; padding: calc(18px * var(--pad)) 22px calc(18px * var(--pad)) 26px; cursor:pointer; }
+.card-top{ display:flex; align-items:flex-start; gap:15px; padding: calc(18px * var(--pad)) 30px calc(18px * var(--pad)) 26px; cursor:pointer; }
 .card-check{
   width:26px; height:26px; border-radius:9px; border:2.5px solid var(--line-strong);
   flex:none; margin-top:2px; display:grid; place-items:center; transition: all .15s; background:var(--surface);
@@ -394,16 +394,17 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 /* drag and drop */
 .drag-item{ position: relative; }
 .drag-handle{
-  display:flex; align-items:center; justify-content:center; flex:none; align-self:center;
-  padding:6px 4px; border-radius:6px; line-height:0;
+  position:absolute; right:6px; top:50%; transform:translateY(-50%);
+  display:flex; align-items:center; justify-content:center;
+  padding:6px 3px; border-radius:6px; line-height:0; z-index:2;
   color: var(--ink-3); cursor: grab;
-  opacity:0.28; transition: opacity .18s, background .14s;
+  opacity:0.3; transition: opacity .18s, background .14s;
   -webkit-tap-highlight-color: transparent;
   touch-action: none;
 }
-.drag-handle .ico{ width:18px; height:18px; }
-.card:hover .drag-handle{ opacity:0.55; }
-.drag-handle:hover{ opacity:0.8 !important; background: var(--surface-2); }
+.drag-handle .ico{ width:16px; height:16px; }
+.card:hover .drag-handle{ opacity:0.6; }
+.drag-handle:hover{ opacity:0.85 !important; background: var(--surface-2); }
 .drag-chosen .drag-handle{ opacity:1 !important; cursor:grabbing; }
 .drag-chosen .card{
   box-shadow: 0 14px 36px oklch(0 0 0 / .16);
