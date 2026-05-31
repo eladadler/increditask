@@ -283,8 +283,6 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
 
   const listRef = useCallback((el) => {
     if(!el || el._sortable) return;
-    let dragOriginParent = null;
-    let dragOriginNext   = null;
     el._sortable = Sortable.create(el, {
       group:            'projects-dnd',
       animation:        200,
@@ -293,18 +291,10 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
       delay:            200,
       delayOnTouchOnly: true,
       touchStartThreshold: 18,
-      onStart(evt){
-        dragOriginParent = evt.item.parentNode;
-        dragOriginNext   = evt.item.nextSibling;
-        // lock body scroll while dragging
-        document.body.style.overflow = 'hidden';
-      },
+      // Do NOT revert the DOM — SortableJS already moved the element
+      // to the correct position. React state update then confirms that
+      // order, so reconciliation is a no-op (no flicker, no conflict).
       onEnd(evt){
-        // restore scroll
-        document.body.style.overflow = '';
-        // Revert DOM — let React re-render from state
-        dragOriginParent.insertBefore(evt.item, dragOriginNext);
-        dragOriginParent = null; dragOriginNext = null;
         const id      = evt.item.dataset.projectId;
         const toGroup = evt.to.dataset.urgency;
         const toIdx   = evt.newDraggableIndex ?? 0;
