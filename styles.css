@@ -326,9 +326,9 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
   display:flex; flex-direction:column; align-items:center; text-align:center;
 }
 .stat:hover{ transform: translateY(-3px); box-shadow: var(--shadow-md); }
-.stat .ico-bg{ position:relative; inset:auto; width:28px; height:28px; opacity:.85; margin:0 auto 8px; }
-.stat .ico-bg .ico{ width:28px; height:28px; }
-.stat .num{ font-family:"Secular One",sans-serif; font-size:30px; line-height:1; letter-spacing:-0.02em; }
+.stat .ico-bg{ position:absolute; inset-inline-end:-6px; bottom:-6px; width:52px; height:52px; opacity:.1; pointer-events:none; }
+.stat .ico-bg .ico{ width:52px; height:52px; }
+.stat .num{ font-family:"Secular One",sans-serif; font-size:34px; line-height:1; letter-spacing:-0.02em; }
 .stat .lbl{ font-size:11.5px; color: var(--ink-2); margin-top:6px; font-weight:600; line-height:1.35; }
 .stat.danger{ background: var(--u-high); }
 .stat.danger .num, .stat.danger .ico-bg{ color:#fff; }
