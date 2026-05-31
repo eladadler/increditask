@@ -106,17 +106,17 @@ function IncomeView({ projects }){
       <div className="inc-summary">
         <div className="stat ok">
           <div className="ico-bg"><Icon name="money" /></div>
-          <div className="num" style={{fontSize:34}}>{PM.fmtMoney(cur.total)}</div>
+          <div className="num">{PM.fmtMoney(cur.total)}</div>
           <div className="lbl">החודש ({cur.full})</div>
         </div>
         <div className="stat flame">
           <div className="ico-bg"><Icon name="trend" /></div>
-          <div className="num" style={{fontSize:34}}>{PM.fmtMoney(avg)}</div>
+          <div className="num">{PM.fmtMoney(avg)}</div>
           <div className="lbl">ממוצע חודשי</div>
         </div>
         <div className="stat warn">
           <div className="ico-bg"><Icon name="clock" /></div>
-          <div className="num" style={{fontSize:34}}>{PM.fmtMoney(pending)}</div>
+          <div className="num">{PM.fmtMoney(pending)}</div>
           <div className="lbl">ממתין לתשלום</div>
         </div>
       </div>
