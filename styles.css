@@ -416,6 +416,18 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 }
 .drag-ghost .card *{ visibility:hidden; }
 .proj-list[data-urgency]{ min-height:4px; transition:background .15s; }
+.drop-hint{
+  border: 2px dashed var(--line-strong); border-radius: var(--r-lg);
+  padding: 22px 16px; text-align:center;
+  color: var(--ink-3); font-size:13.5px; font-weight:500;
+  min-height: 72px; display:flex; align-items:center; justify-content:center;
+  transition: border-color .15s, background .15s, color .15s;
+  pointer-events: none;
+}
+.proj-list.sortable-drag-over .drop-hint,
+.proj-list[data-urgency]:has(.sortable-ghost) .drop-hint{
+  border-color: var(--accent); background: var(--accent-soft); color: var(--accent-ink);
+}
 
 /* required field indicators */
 .req-star{ color: var(--u-high); font-size:15px; line-height:1; margin-inline-start:2px; }

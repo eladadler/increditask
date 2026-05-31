@@ -205,6 +205,7 @@ function SortableGroup({ group, handlers, onReorder }){
     const s = Sortable.create(el, {
       group:               'projects-dnd',
       handle:              '.drag-handle',
+      filter:              '.drop-hint',
       animation:           180,
       ghostClass:          'drag-ghost',
       chosenClass:         'drag-chosen',
@@ -228,11 +229,14 @@ function SortableGroup({ group, handlers, onReorder }){
 
   return (
     <div className="proj-list" data-urgency={group.key} ref={listEl}>
-      {group.items.map(p=>(
-        <div key={p.id} data-project-id={p.id} className="drag-item">
-          <ProjectCard project={p} {...handlers} draggable />
-        </div>
-      ))}
+      {group.items.length === 0
+        ? <div className="drop-hint">שחרר כאן להעברה לדחיפות {group.label}</div>
+        : group.items.map(p=>(
+            <div key={p.id} data-project-id={p.id} className="drag-item">
+              <ProjectCard project={p} {...handlers} draggable />
+            </div>
+          ))
+      }
     </div>
   );
 }
@@ -248,15 +252,16 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
   if(urgFilter!=="all") list = list.filter(p=> p.urgency===urgFilter);
 
   const groups = [
-    { key:"high", label:"דחיפות גבוהה" },
-    { key:"mid",  label:"דחיפות בינונית" },
-    { key:"low",  label:"דחיפות נמוכה" },
+    { key:"high", label:"גבוהה" },
+    { key:"mid",  label:"בינונית" },
+    { key:"low",  label:"נמוכה" },
   ].map(g => ({
     ...g,
+    fullLabel: { high:"דחיפות גבוהה", mid:"דחיפות בינונית", low:"דחיפות נמוכה" }[g.key],
     items: list
       .filter(p=> p.urgency===g.key)
       .sort((a,b)=> (a.manualOrder??999999)-(b.manualOrder??999999))
-  })).filter(g=> g.items.length);
+  }));
 
   return (
     <div>
@@ -284,14 +289,14 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
         </div>
       </div>
 
-      {list.length ? (
+      {projects.length ? (
         <div>
           {groups.map(g=>(
             <div key={g.key}>
               <div className="group-label">
                 <span className="dot" style={{width:9,height:9,borderRadius:99,background:`var(--u-${g.key})`}}></span>
-                <span className="t">{g.label}</span>
-                <span className="n" style={{background:`var(--u-${g.key})`}}>{g.items.length}</span>
+                <span className="t">{g.fullLabel}</span>
+                {g.items.length > 0 && <span className="n" style={{background:`var(--u-${g.key})`}}>{g.items.length}</span>}
                 <span className="ln"></span>
               </div>
               <SortableGroup group={g} handlers={handlers} onReorder={onReorder} />
