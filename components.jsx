@@ -116,6 +116,11 @@ function ProjectCard({ project, onUpdate, onComplete, onEdit, onDelete, onRestor
         </div>
       )}
       <div className="card-top" onClick={()=>setOpen(o=>!o)}>
+        {draggable && (
+          <span className="drag-handle" onClick={e=>e.stopPropagation()} title="גרור לשינוי סדר">
+            <Icon name="grip" />
+          </span>
+        )}
         {archived && (
           <span className="card-check done" style={{cursor:"default"}}><Icon name="check" /></span>
         )}
@@ -134,11 +139,6 @@ function ProjectCard({ project, onUpdate, onComplete, onEdit, onDelete, onRestor
           {!archived && prog && <ProgressBar p={prog} />}
         </div>
         <div className="card-right">
-          {draggable && (
-            <span className="drag-handle" onClick={e=>e.stopPropagation()} title="גרור לשינוי סדר">
-              <Icon name="grip" />
-            </span>
-          )}
           <Icon name="chevron" cls="expand-ico" />
         </div>
       </div>

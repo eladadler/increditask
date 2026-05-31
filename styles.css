@@ -394,8 +394,8 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 /* drag and drop */
 .drag-item{ position: relative; }
 .drag-handle{
-  display:flex; align-items:center; justify-content:center;
-  padding:4px 3px; border-radius:6px; line-height:0;
+  display:flex; align-items:center; justify-content:center; flex:none; align-self:center;
+  padding:6px 4px; border-radius:6px; line-height:0;
   color: var(--ink-3); cursor: grab;
   opacity:0.28; transition: opacity .18s, background .14s;
   -webkit-tap-highlight-color: transparent;
