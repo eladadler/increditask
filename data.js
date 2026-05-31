@@ -219,6 +219,7 @@
     target:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
     list:'<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-linecap="round"/>',
     inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2M5.5 5h13l3.5 7v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6L5.5 5z" stroke-linecap="round" stroke-linejoin="round"/>',
+    sliders:'<path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" stroke-linecap="round" stroke-linejoin="round"/>',
   };
   function icon(name, cls){
     return `<svg class="ico ${cls||''}" viewBox="0 0 24 24" fill="none" stroke="currentColor">${I[name]||''}</svg>`;

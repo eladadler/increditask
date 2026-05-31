@@ -1,3 +1,84 @@
+/* ===== shared category manager (used in Settings) ===== */
+const CAT_COLORS = [
+  "#E07B5A","#5A8FD6","#5DB37E","#B05AD6",
+  "#D6A83A","#5ABCD6","#D65A7E","#7B8A6A",
+];
+
+function CategoryManager({ customCats, onChange }){
+  const [name, setName] = useState("");
+  const [color, setColor] = useState(CAT_COLORS[0]);
+
+  function add(){
+    const label = name.trim();
+    if(!label) return;
+    const key = "c_" + PM.uid();
+    onChange({ ...customCats, [key]: { label, color } });
+    setName("");
+  }
+  function removeCat(key){
+    const upd = { ...customCats };
+    delete upd[key];
+    onChange(upd);
+  }
+
+  const builtins = Object.entries(PM.CATEGORIES).filter(([k]) => PM.BUILTIN_CATS.has(k));
+  const customs  = Object.entries(customCats);
+
+  return (
+    <div>
+      <div className="cat-list">
+        {builtins.map(([k,c])=>(
+          <div key={k} className="cat-row">
+            <span className="cat-row-dot" style={{background:c.color}}></span>
+            <span className="cat-row-lbl">{c.label}</span>
+            <span className="cat-row-tag">מובנה</span>
+          </div>
+        ))}
+        {customs.map(([k,c])=>(
+          <div key={k} className="cat-row">
+            <span className="cat-row-dot" style={{background:c.color}}></span>
+            <span className="cat-row-lbl">{c.label}</span>
+            <button className="cat-row-del" onClick={()=>removeCat(k)} title="מחק">✕</button>
+          </div>
+        ))}
+        {!customs.length && <div className="cat-empty">אין קטגוריות מותאמות עדיין</div>}
+      </div>
+      <div className="cat-add-row">
+        <input value={name} onChange={e=>setName(e.target.value)}
+          onKeyDown={e=>{ if(e.key==="Enter") add(); }}
+          placeholder="שם קטגוריה חדשה…" />
+        <button onClick={add}>+</button>
+      </div>
+      <div className="cat-swatches">
+        {CAT_COLORS.map(c=>(
+          <button key={c} className={"cat-swatch"+(color===c?" on":"")}
+            style={{background:c}} onClick={()=>setColor(c)} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ===== icon generator (used in Settings) ===== */
+function makeAppIcon(hex){
+  const c = document.createElement('canvas');
+  c.width = c.height = 180;
+  const ctx = c.getContext('2d');
+  const r=40, w=180, h=180;
+  ctx.beginPath();
+  ctx.moveTo(r,0); ctx.lineTo(w-r,0); ctx.quadraticCurveTo(w,0,w,r);
+  ctx.lineTo(w,h-r); ctx.quadraticCurveTo(w,h,w-r,h);
+  ctx.lineTo(r,h); ctx.quadraticCurveTo(0,h,0,h-r);
+  ctx.lineTo(0,r); ctx.quadraticCurveTo(0,0,r,0);
+  ctx.closePath();
+  ctx.fillStyle = hex; ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.95)';
+  ctx.font = 'bold 85px Rubik,sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText('פ', 90, 94);
+  return c.toDataURL('image/png');
+}
+
 /* ===== Today & Income views ===== */
 
 function TodayView({ projects, ...handlers }){
@@ -159,4 +240,64 @@ function IncomeView({ projects }){
   );
 }
 
-Object.assign(window, { TodayView, IncomeView });
+/* ---- Settings view ---- */
+const ICON_THEMES = [
+  { key:"#DD8470", label:"ורוד" },
+  { key:"#6E8AA0", label:"כחול" },
+  { key:"#6E9580", label:"ירוק" },
+  { key:"#9A7186", label:"סגול" },
+];
+
+function SettingsView({ customCats, onCatsChange }){
+  const [activeIcon, setActiveIcon] = useState(
+    () => localStorage.getItem("pm_icon_v1") || "#DD8470"
+  );
+
+  function applyIcon(hex){
+    setActiveIcon(hex);
+    localStorage.setItem("pm_icon_v1", hex);
+    const dataUrl = makeAppIcon(hex);
+    let link = document.querySelector('link[rel="apple-touch-icon"]');
+    if(!link){ link = document.createElement('link'); link.rel = 'apple-touch-icon'; document.head.appendChild(link); }
+    link.href = dataUrl;
+  }
+
+  useEffect(()=>{ applyIcon(activeIcon); }, []);
+
+  return (
+    <div>
+      <div className="page-head">
+        <div>
+          <div className="page-title">הגדרות</div>
+          <div className="page-sub">התאמה אישית של האפליקציה</div>
+        </div>
+      </div>
+
+      <div className="settings-card">
+        <div className="settings-h"><Icon name="folder" /><span>תוויות פרוייקטים</span></div>
+        <CategoryManager customCats={customCats} onChange={onCatsChange} />
+      </div>
+
+      <div className="settings-card">
+        <div className="settings-h"><Icon name="sparkle" /><span>אייקון האפליקציה</span></div>
+        <p className="settings-hint">צבע האייקון שיוצג כשתוסיף את האפליקציה לדף הבית.</p>
+        <div className="ip-grid">
+          {ICON_THEMES.map(th=>(
+            <button key={th.key} className={"ip-item"+(activeIcon===th.key?" on":"")}
+              style={{background: th.key}}
+              onClick={()=>applyIcon(th.key)}>
+              <span className="ip-letter">פ</span>
+              {activeIcon===th.key && <span className="ip-check">✓</span>}
+              <span className="ip-lbl">{th.label}</span>
+            </button>
+          ))}
+        </div>
+        <p className="settings-hint" style={{marginTop:12}}>
+          לאחר הבחירה, הוסף לדף הבית דרך הדפדפן כדי לראות את האייקון החדש.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { TodayView, IncomeView, SettingsView, CategoryManager });

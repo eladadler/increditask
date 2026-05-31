@@ -1,72 +1,3 @@
-/* ===== custom category manager ===== */
-const CAT_COLORS = [
-  "#E07B5A","#5A8FD6","#5DB37E","#B05AD6",
-  "#D6A83A","#5ABCD6","#D65A7E","#7B8A6A",
-];
-
-function CategoryManager({ customCats, onChange }){
-  const [name, setName] = useState("");
-  const [color, setColor] = useState(CAT_COLORS[0]);
-
-  function add(){
-    const label = name.trim();
-    if(!label) return;
-    const key = "c_" + PM.uid();
-    onChange({ ...customCats, [key]: { label, color } });
-    setName("");
-  }
-  function remove(key){
-    const updated = { ...customCats };
-    delete updated[key];
-    onChange(updated);
-  }
-
-  const builtins = Object.entries(PM.CATEGORIES).filter(([k]) => PM.BUILTIN_CATS.has(k));
-  const customs  = Object.entries(customCats);
-
-  return (
-    <div>
-      <div style={{display:"flex",flexDirection:"column",gap:3,marginBottom:8}}>
-        {builtins.map(([k,c])=>(
-          <div key={k} style={{display:"flex",alignItems:"center",gap:7,padding:"2px 0"}}>
-            <span style={{width:9,height:9,borderRadius:3,background:c.color,flexShrink:0,display:"inline-block"}}></span>
-            <span style={{flex:1,fontSize:11.5}}>{c.label}</span>
-            <span style={{fontSize:10,color:"rgba(41,38,27,.35)"}}>מובנה</span>
-          </div>
-        ))}
-        {customs.map(([k,c])=>(
-          <div key={k} style={{display:"flex",alignItems:"center",gap:7,padding:"2px 0"}}>
-            <span style={{width:9,height:9,borderRadius:3,background:c.color,flexShrink:0,display:"inline-block"}}></span>
-            <span style={{flex:1,fontSize:11.5}}>{c.label}</span>
-            <button onClick={()=>remove(k)}
-              style={{appearance:"none",border:0,background:"none",cursor:"pointer",
-                padding:"1px 4px",color:"rgba(41,38,27,.45)",fontSize:12,lineHeight:1,
-                borderRadius:4}} title="מחק קטגוריה">✕</button>
-          </div>
-        ))}
-        {!customs.length && (
-          <div style={{fontSize:11,color:"rgba(41,38,27,.38)",paddingTop:2}}>אין קטגוריות מותאמות עדיין</div>
-        )}
-      </div>
-      <div style={{display:"flex",gap:5,marginBottom:6}}>
-        <input value={name} onChange={e=>setName(e.target.value)}
-          onKeyDown={e=>{ if(e.key==="Enter") add(); }}
-          placeholder="שם קטגוריה…" className="twk-field" style={{flex:1}} />
-        <button onClick={add} className="twk-btn secondary"
-          style={{padding:"0 10px",flexShrink:0}}>+</button>
-      </div>
-      <div style={{display:"flex",flexWrap:"wrap",gap:5}}>
-        {CAT_COLORS.map(c=>(
-          <button key={c} onClick={()=>setColor(c)}
-            style={{width:22,height:22,borderRadius:5,background:c,padding:0,
-              border:color===c?"2.5px solid rgba(0,0,0,.72)":"2px solid rgba(0,0,0,.1)",
-              cursor:"pointer",flexShrink:0,appearance:"none"}} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
 /* ===== main app ===== */
 const ACCENTS = {
   "#DD8470": { a:"oklch(0.66 0.11 40)",  a2:"oklch(0.62 0.115 33)", soft:"oklch(0.95 0.03 42)",  ink:"oklch(0.52 0.1 36)" },
@@ -96,6 +27,7 @@ function App(){
   const [editTarget, setEditTarget] = useState(null);
   const [cloudStatus, setCloudStatus] = useState("idle"); // idle | loading | synced | error
   const [customCats, setCustomCats] = useState(() => PM.loadCustomCats());
+  const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem("pm_welcomed_v1"));
 
   // apply + save custom categories whenever they change
   useEffect(() => {
@@ -191,10 +123,11 @@ function App(){
   };
 
   const navItems = [
-    { key:"today", label:"היום", icon:"today", count: counts.today },
-    { key:"projects", label:"פרוייקטים", icon:"folder", count: counts.projects },
-    { key:"income", label:"הכנסות", icon:"chart" },
-    { key:"archive", label:"ארכיון", icon:"archive", count: counts.archive },
+    { key:"today",    label:"היום",      icon:"today",   count: counts.today    },
+    { key:"projects", label:"פרוייקטים", icon:"folder",  count: counts.projects },
+    { key:"income",   label:"הכנסות",    icon:"chart"                           },
+    { key:"archive",  label:"ארכיון",    icon:"archive", count: counts.archive  },
+    { key:"settings", label:"הגדרות",    icon:"sliders"                         },
   ];
 
   return (
@@ -209,6 +142,7 @@ function App(){
           handlers={handlers} onReorder={reorder} />}
         {view==="income" && <IncomeView projects={projects} />}
         {view==="archive" && <ArchiveView projects={archived} handlers={handlers} />}
+        {view==="settings" && <SettingsView customCats={customCats} onCatsChange={setCustomCats} />}
       </main>
 
       <aside className="sidebar">
@@ -241,6 +175,11 @@ function App(){
 
       {modal && <ProjectModal initial={editTarget} onSave={saveProject} onClose={()=>{ setModal(null); setEditTarget(null); }} />}
 
+      {showWelcome && <WelcomeScreen onDone={()=>{
+        localStorage.setItem("pm_welcomed_v1","1");
+        setShowWelcome(false);
+      }} />}
+
       <TweaksPanel>
         <TweakSection label="מראה" />
         <TweakColor label="צבע מבטא" value={t.accent}
@@ -249,8 +188,6 @@ function App(){
         <TweakRadio label="צפיפות" value={t.density}
           options={["צפוף","רגיל","מרווח"]}
           onChange={(v)=>setTweak("density", v)} />
-        <TweakSection label="קטגוריות" />
-        <CategoryManager customCats={customCats} onChange={setCustomCats} />
       </TweaksPanel>
     </div>
   );

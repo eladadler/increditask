@@ -1,0 +1,21 @@
+{
+  "name": "הפרוייקטים שלי",
+  "short_name": "פרוייקטים",
+  "description": "ניהול פרוייקטים עבור עצמאים",
+  "start_url": "/increditask/",
+  "scope": "/increditask/",
+  "display": "standalone",
+  "background_color": "#f9f8f6",
+  "theme_color": "#DD8470",
+  "lang": "he",
+  "dir": "rtl",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
