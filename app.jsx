@@ -228,13 +228,20 @@ function ProjectsView({ projects, search, setSearch, catFilter, setCatFilter, ur
       delay:            200,
       delayOnTouchOnly: true,
       touchStartThreshold: 18,
-      // Do NOT revert the DOM — SortableJS already moved the element
-      // to the correct position. React state update then confirms that
-      // order, so reconciliation is a no-op (no flicker, no conflict).
       onEnd(evt){
         const id      = evt.item.dataset.projectId;
         const toGroup = evt.to.dataset.urgency;
         const toIdx   = evt.newDraggableIndex ?? 0;
+        // Same-group reorder: SortableJS DOM already matches target order —
+        // React reconciliation is a no-op, no revert needed.
+        // Cross-group move: SortableJS placed the element in a different list,
+        // but React still owns the original DOM tree and will crash trying to
+        // remove the element from its old parent. Revert the DOM first so
+        // React can cleanly re-render the element in the correct group.
+        if(evt.from !== evt.to){
+          const ref = evt.from.children[evt.oldDraggableIndex] || null;
+          evt.from.insertBefore(evt.item, ref);
+        }
         reorderRef.current(id, toGroup, toIdx);
       }
     });
