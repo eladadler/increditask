@@ -596,3 +596,15 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .ip-letter{ font-family:"Secular One",sans-serif; font-size:30px; color:white; line-height:1; }
 .ip-check{ position:absolute; top:5px; left:6px; color:white; font-size:14px; font-weight:700; }
 .ip-lbl{ font-size:10.5px; color:rgba(255,255,255,.9); font-weight:600; }
+.ip-upload-btn{
+  display:flex; align-items:center; gap:10px; width:100%; margin-top:12px;
+  padding:11px 14px; border-radius:14px; border:2px dashed var(--line-strong);
+  background:var(--surface-2); cursor:pointer; color:var(--ink-2);
+  font-size:14px; font-weight:500; transition:border-color .14s, background .14s, color .14s;
+  text-align:start;
+}
+.ip-upload-btn:hover{ border-color:var(--accent); background:var(--accent-soft); color:var(--accent-ink); }
+.ip-upload-btn.on{ border-style:solid; border-color:var(--accent); background:var(--accent-soft); color:var(--accent-ink); }
+.ip-upload-ico{ display:flex; align-items:center; justify-content:center; width:36px; height:36px;
+  border-radius:8px; background:var(--line); flex-shrink:0; }
+.ip-upload-preview{ width:36px; height:36px; border-radius:8px; object-fit:cover; flex-shrink:0; }

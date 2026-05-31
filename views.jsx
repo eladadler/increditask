@@ -252,17 +252,63 @@ function SettingsView({ customCats, onCatsChange }){
   const [activeIcon, setActiveIcon] = useState(
     () => localStorage.getItem("pm_icon_v1") || "#DD8470"
   );
+  const [customIconUrl, setCustomIconUrl] = useState(
+    () => localStorage.getItem("pm_icon_custom_v1") || null
+  );
+  const fileInputRef = useRef(null);
 
-  function applyIcon(hex){
-    setActiveIcon(hex);
-    localStorage.setItem("pm_icon_v1", hex);
-    const dataUrl = makeAppIcon(hex);
+  function setLink(dataUrl){
     let link = document.querySelector('link[rel="apple-touch-icon"]');
     if(!link){ link = document.createElement('link'); link.rel = 'apple-touch-icon'; document.head.appendChild(link); }
     link.href = dataUrl;
   }
 
-  useEffect(()=>{ applyIcon(activeIcon); }, []);
+  function applyIcon(hex){
+    setActiveIcon(hex);
+    localStorage.setItem("pm_icon_v1", hex);
+    setLink(makeAppIcon(hex));
+  }
+
+  function applyCustomIcon(dataUrl){
+    setActiveIcon("custom");
+    setCustomIconUrl(dataUrl);
+    localStorage.setItem("pm_icon_v1", "custom");
+    localStorage.setItem("pm_icon_custom_v1", dataUrl);
+    setLink(dataUrl);
+  }
+
+  function handleUpload(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const c = document.createElement('canvas');
+        c.width = c.height = 180;
+        const ctx = c.getContext('2d');
+        // crop center square
+        const s = Math.min(img.width, img.height);
+        const sx = (img.width - s) / 2;
+        const sy = (img.height - s) / 2;
+        ctx.drawImage(img, sx, sy, s, s, 0, 0, 180, 180);
+        applyCustomIcon(c.toDataURL('image/png'));
+      };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  }
+
+  useEffect(()=>{
+    const saved = localStorage.getItem("pm_icon_v1") || "#DD8470";
+    if(saved === "custom"){
+      const url = localStorage.getItem("pm_icon_custom_v1");
+      if(url) setLink(url);
+    } else {
+      setLink(makeAppIcon(saved));
+    }
+  }, []);
 
   return (
     <div>
@@ -280,7 +326,7 @@ function SettingsView({ customCats, onCatsChange }){
 
       <div className="settings-card">
         <div className="settings-h"><Icon name="sparkle" /><span>אייקון האפליקציה</span></div>
-        <p className="settings-hint">צבע האייקון שיוצג כשתוסיף את האפליקציה לדף הבית.</p>
+        <p className="settings-hint">האייקון שיוצג כשתוסיף את האפליקציה לדף הבית.</p>
         <div className="ip-grid">
           {ICON_THEMES.map(th=>(
             <button key={th.key} className={"ip-item"+(activeIcon===th.key?" on":"")}
@@ -292,6 +338,17 @@ function SettingsView({ customCats, onCatsChange }){
             </button>
           ))}
         </div>
+
+        <input ref={fileInputRef} type="file" accept="image/*" style={{display:"none"}} onChange={handleUpload} />
+        <button
+          className={"ip-upload-btn"+(activeIcon==="custom"?" on":"")}
+          onClick={()=>fileInputRef.current.click()}>
+          {activeIcon==="custom" && customIconUrl
+            ? <img src={customIconUrl} className="ip-upload-preview" alt="" />
+            : <span className="ip-upload-ico"><Icon name="plus" /></span>}
+          <span>{activeIcon==="custom" ? "תמונה מותאמת אישית ✓" : "העלה תמונה משלך…"}</span>
+        </button>
+
         <p className="settings-hint" style={{marginTop:12}}>
           לאחר הבחירה, הוסף לדף הבית דרך הדפדפן כדי לראות את האייקון החדש.
         </p>
