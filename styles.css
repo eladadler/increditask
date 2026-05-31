@@ -405,6 +405,18 @@ input,textarea,select{ font-family: inherit; color: var(--ink); }
 .sync-toast.error{ color:var(--u-high); border-color:var(--u-high); }
 @keyframes fadeout{ 0%{opacity:1} 60%{opacity:1} 100%{opacity:0} }
 
+/* modal details toggle */
+.details-toggle{
+  display:flex; align-items:center; gap:7px; width:100%;
+  padding:10px 0 2px; border:none; background:none; cursor:pointer;
+  font-size:13px; font-weight:600; color: var(--ink-3);
+  border-top:1.5px solid var(--line); margin-top:2px;
+}
+.details-toggle:hover{ color: var(--accent-ink); }
+.details-chevron{ transition: transform .22s cubic-bezier(.4,0,.2,1); flex-shrink:0; }
+.details-toggle.open .details-chevron{ transform: rotate(180deg); }
+.details-body{ display:flex; flex-direction:column; gap:14px; }
+
 /* prevent Chrome Android auto-zoom on input focus (font-size < 16px triggers zoom) */
 @media (max-width: 768px) {
   input, textarea, select { font-size: 16px !important; }

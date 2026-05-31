@@ -10,6 +10,7 @@ function ProjectModal({ initial, onSave, onClose }){
   const [income, setIncome] = useState(initial?.income ?? "");
   const [paid, setPaid] = useState(initial?.paid || false);
   const [notes, setNotes] = useState(initial?.notes || "");
+  const [detailsOpen, setDetailsOpen] = useState(editing);
   const titleRef = useRef(null);
 
   useEffect(()=>{ titleRef.current?.focus(); }, []);
@@ -37,6 +38,8 @@ function ProjectModal({ initial, onSave, onClose }){
           <button className="modal-close" onClick={onClose}><Icon name="x" /></button>
         </div>
         <div className="modal-body">
+
+          {/* ── primary fields ── */}
           <div className="field">
             <label>שם הפרוייקט <span className="req-star">*</span></label>
             <input ref={titleRef} value={title}
@@ -46,29 +49,6 @@ function ProjectModal({ initial, onSave, onClose }){
               className={titleTouched && !title.trim() ? "input-error" : ""}
               onKeyDown={e=>{ if(e.key==="Enter" && (e.metaKey||e.ctrlKey)) submit(); }} />
             {titleTouched && !title.trim() && <span className="field-err">שדה חובה</span>}
-          </div>
-
-          <div className="field-row">
-            <div className="field">
-              <label>לקוח</label>
-              <input value={client} onChange={e=>setClient(e.target.value)} placeholder="שם הלקוח" />
-            </div>
-            <div className="field input-money">
-              <label>הכנסה</label>
-              <span className="cur" style={{top:"calc(50% + 12px)"}}>₪</span>
-              <input type="number" min="0" value={income} onChange={e=>setIncome(e.target.value)} placeholder="0" />
-            </div>
-          </div>
-
-          <div className="field">
-            <label>קטגוריה</label>
-            <div className="cat-pick">
-              {Object.entries(PM.CATEGORIES).map(([key,c])=>(
-                <button key={key} className={"cat-opt"+(category===key?" on":"")}
-                  style={category===key ? { background:c.color } : { color:c.color, borderColor:`color-mix(in oklch, ${c.color} 35%, white)` }}
-                  onClick={()=>setCategory(key)}>{c.label}</button>
-              ))}
-            </div>
           </div>
 
           <div className="field">
@@ -84,25 +64,60 @@ function ProjectModal({ initial, onSave, onClose }){
             </div>
           </div>
 
-          <div className="field-row">
-            <div className="field">
-              <label>דד-ליין</label>
-              <input type="date" value={deadline||""} onChange={e=>setDeadline(e.target.value)} />
-            </div>
-            <div className="field">
-              <label>סטטוס תשלום</label>
-              <div className="seg">
-                <button className={"seg-btn"+(!paid?" on-mid":"")} onClick={()=>setPaid(false)}>ממתין</button>
-                <button className={"seg-btn"+(paid?" on-low":"")} onClick={()=>setPaid(true)}>שולם</button>
+          {/* ── details toggle ── */}
+          <button className={"details-toggle"+(detailsOpen?" open":"")}
+            onClick={()=>setDetailsOpen(o=>!o)}>
+            <Icon name="chevron" cls="details-chevron" />
+            <span>{detailsOpen ? "פחות פרטים" : "פרטים נוספים"}</span>
+          </button>
+
+          {/* ── collapsible details ── */}
+          {detailsOpen && (
+            <div className="details-body">
+              <div className="field-row">
+                <div className="field">
+                  <label>לקוח</label>
+                  <input value={client} onChange={e=>setClient(e.target.value)} placeholder="שם הלקוח" />
+                </div>
+                <div className="field input-money">
+                  <label>הכנסה</label>
+                  <span className="cur" style={{top:"calc(50% + 12px)"}}>₪</span>
+                  <input type="number" min="0" value={income} onChange={e=>setIncome(e.target.value)} placeholder="0" />
+                </div>
+              </div>
+
+              <div className="field">
+                <label>קטגוריה</label>
+                <div className="cat-pick">
+                  {Object.entries(PM.CATEGORIES).map(([key,c])=>(
+                    <button key={key} className={"cat-opt"+(category===key?" on":"")}
+                      style={category===key ? { background:c.color } : { color:c.color, borderColor:`color-mix(in oklch, ${c.color} 35%, white)` }}
+                      onClick={()=>setCategory(key)}>{c.label}</button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="field-row">
+                <div className="field">
+                  <label>דד-ליין</label>
+                  <input type="date" value={deadline||""} onChange={e=>setDeadline(e.target.value)} />
+                </div>
+                <div className="field">
+                  <label>סטטוס תשלום</label>
+                  <div className="seg">
+                    <button className={"seg-btn"+(!paid?" on-mid":"")} onClick={()=>setPaid(false)}>ממתין</button>
+                    <button className={"seg-btn"+(paid?" on-low":"")} onClick={()=>setPaid(true)}>שולם</button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="field">
+                <label>הערות וקישורים</label>
+                <textarea value={notes} onChange={e=>setNotes(e.target.value)} rows="3"
+                  placeholder="פרטים, קישורים, נקודות לזכור…" style={{resize:"vertical", minHeight:70}} />
               </div>
             </div>
-          </div>
-
-          <div className="field">
-            <label>הערות וקישורים</label>
-            <textarea value={notes} onChange={e=>setNotes(e.target.value)} rows="3"
-              placeholder="פרטים, קישורים, נקודות לזכור…" style={{resize:"vertical", minHeight:70}} />
-          </div>
+          )}
 
           <div className="modal-foot">
             <button className="btn-secondary" onClick={onClose}>ביטול</button>
