@@ -205,7 +205,6 @@ function SortableGroup({ group, handlers, onReorder }){
     const s = Sortable.create(el, {
       group:               'projects-dnd',
       handle:              '.drag-handle',
-      filter:              '.drop-hint',
       animation:           180,
       ghostClass:          'drag-ghost',
       chosenClass:         'drag-chosen',
@@ -228,15 +227,17 @@ function SortableGroup({ group, handlers, onReorder }){
   }, []);
 
   return (
-    <div className="proj-list" data-urgency={group.key} ref={listEl}>
-      {group.items.length === 0
-        ? <div className="drop-hint">שחרר כאן להעברה לדחיפות {group.label}</div>
-        : group.items.map(p=>(
-            <div key={p.id} data-project-id={p.id} className="drag-item">
-              <ProjectCard project={p} {...handlers} draggable />
-            </div>
-          ))
-      }
+    <div className="group-drop-wrapper">
+      <div className="proj-list" data-urgency={group.key} ref={listEl}>
+        {group.items.map(p=>(
+          <div key={p.id} data-project-id={p.id} className="drag-item">
+            <ProjectCard project={p} {...handlers} draggable />
+          </div>
+        ))}
+      </div>
+      {group.items.length === 0 && (
+        <div className="drop-hint">גרור לכאן להעברה לדחיפות {group.label}</div>
+      )}
     </div>
   );
 }
