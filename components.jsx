@@ -56,6 +56,10 @@ function SubtaskList({ project, onChange }){
   function del(id){
     onChange(project.subtasks.filter(s=> s.id!==id));
   }
+  function clearDone(){
+    onChange(project.subtasks.filter(s=> !s.done));
+  }
+  const doneCount = project.subtasks.filter(s=> s.done).length;
   const prioColors = { high:"var(--u-high)", mid:"var(--u-mid)", low:"var(--u-low)" };
 
   return (
@@ -73,6 +77,11 @@ function SubtaskList({ project, onChange }){
         ))}
         {!ordered.length && <div style={{fontSize:13.5, color:"var(--ink-3)", padding:"6px 2px"}}>אין עדיין תתי-משימות.</div>}
       </div>
+      {doneCount > 0 && (
+        <button className="sub-clear-done" onClick={clearDone}>
+          <Icon name="trash" /> נקה {doneCount} שבוצעו
+        </button>
+      )}
       <div className="sub-add">
         <div className="prio-pick">
           {["high","mid","low"].map(p=>(
