@@ -70,9 +70,7 @@
       const raw = localStorage.getItem(STORE_KEY);
       if(raw) return JSON.parse(raw);
     }catch(e){}
-    const initial = seed();
-    save(initial); // persist immediately so cloud sync can read it back
-    return initial;
+    return [];
   }
   function save(data){
     try{ localStorage.setItem(STORE_KEY, JSON.stringify(data)); }catch(e){}
