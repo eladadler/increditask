@@ -171,7 +171,7 @@ function App(){
 
       {cloudStatus==="loading" && <div className="sync-toast">☁ מסנכרן…</div>}
       {cloudStatus==="synced"  && <div className="sync-toast synced" key={Date.now()}>☁ מסונכרן</div>}
-      {cloudStatus==="error"   && <div className="sync-toast error">⚠ נכשל לסנכרן</div>}
+      {cloudStatus==="error"   && <div className="sync-toast error">⚠ נכשל בסנכרון</div>}
 
       {modal && <ProjectModal initial={editTarget} onSave={saveProject} onClose={()=>{ setModal(null); setEditTarget(null); }} />}
 
