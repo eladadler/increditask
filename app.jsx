@@ -26,6 +26,7 @@ function App(){
   const [modal, setModal] = useState(null);
   const [editTarget, setEditTarget] = useState(null);
   const [cloudStatus, setCloudStatus] = useState("idle"); // idle | loading | synced | error
+  const [cloudError, setCloudError] = useState(null);
   const [customCats, setCustomCats] = useState(() => PM.loadCustomCats());
   const [showWelcome, setShowWelcome] = useState(() => !localStorage.getItem("pm_welcomed_v1"));
 
@@ -38,26 +39,28 @@ function App(){
   // save to localStorage on every change
   useEffect(()=>{ PM.save(projects); }, [projects]);
 
-  // load from Supabase on mount
-  useEffect(()=>{
+  function doSync(){
     setCloudStatus("loading");
-    PM.loadFromCloud().then(cloudData=>{
-      if(cloudData === null){
-        // network/auth error — stay on localStorage
+    setCloudError(null);
+    PM.loadFromCloud().then(({ data: cloudData, error: err })=>{
+      if(err){
         setCloudStatus("error");
+        setCloudError(err);
       } else if(cloudData.length > 0){
-        // cloud is the source of truth — replace local state completely
         setProjects(cloudData);
         PM.save(cloudData);
         setCloudStatus("synced");
       } else {
-        // cloud is empty — upload current local data to cloud
         const local = PM.load();
         Promise.all(local.map(p => PM.upsertToCloud(p)))
-          .then(()=> setCloudStatus("synced"));
+          .then(()=> setCloudStatus("synced"))
+          .catch(e=>{ setCloudStatus("error"); setCloudError(e.message); });
       }
     });
-  }, []);
+  }
+
+  // load from Supabase on mount
+  useEffect(()=>{ doSync(); }, []);
 
   const update = (proj)=>{
     setProjects(ps=> ps.map(p=> p.id===proj.id ? proj : p));
@@ -171,7 +174,13 @@ function App(){
 
       {cloudStatus==="loading" && <div className="sync-toast">☁ מסנכרן…</div>}
       {cloudStatus==="synced"  && <div className="sync-toast synced" key={Date.now()}>☁ מסונכרן</div>}
-      {cloudStatus==="error"   && <div className="sync-toast error">⚠ נכשל בסנכרון</div>}
+      {cloudStatus==="error"   && (
+        <div className="sync-toast error">
+          ⚠ נכשל בסנכרון
+          {cloudError && <span className="sync-err-msg">{cloudError}</span>}
+          <button className="sync-retry" onClick={doSync}>נסה שוב</button>
+        </div>
+      )}
 
       {modal && <ProjectModal initial={editTarget} onSave={saveProject} onClose={()=>{ setModal(null); setEditTarget(null); }} />}
 

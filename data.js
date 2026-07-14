@@ -163,10 +163,10 @@
     try{
       const { data, error } = await window._sb.from('projects').select('data');
       if(error) throw error;
-      return data.map(r => r.data);
+      return { data: data.map(r => r.data), error: null };
     }catch(e){
-      console.warn('[PM] cloud load failed, using localStorage:', e.message);
-      return null;
+      console.error('[PM] cloud load failed:', e.message, e);
+      return { data: null, error: e.message };
     }
   }
   async function upsertToCloud(project){
