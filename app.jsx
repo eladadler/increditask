@@ -42,24 +42,28 @@ function App(){
   function doSync(){
     setCloudStatus("loading");
     setCloudError(null);
-    PM.loadFromCloud().then(({ data: cloudData, error: err })=>{
-      if(err){
-        setCloudStatus("error");
-        setCloudError(err);
-      } else if(cloudData.length > 0){
-        setProjects(cloudData);
-        PM.save(cloudData);
-        setCloudStatus("synced");
-      } else {
-        const local = PM.load();
-        Promise.all(local.map(p => PM.upsertToCloud(p)))
-          .then(()=> setCloudStatus("synced"))
-          .catch(e=>{ setCloudStatus("error"); setCloudError(e.message); });
-      }
-    });
+    // timeout so "loading" spinner doesn't hang forever
+    const timeout = new Promise((_,rej)=> setTimeout(()=>rej(new Error("timeout")), 8000));
+    Promise.race([PM.loadFromCloud(), timeout])
+      .then(({ data: cloudData, error: err })=>{
+        if(err){
+          setCloudStatus("error");
+          setCloudError(err);
+        } else if(cloudData.length > 0){
+          setProjects(cloudData);
+          PM.save(cloudData);
+          setCloudStatus("synced");
+        } else {
+          const local = PM.load();
+          Promise.all(local.map(p => PM.upsertToCloud(p)))
+            .then(()=> setCloudStatus("synced"))
+            .catch(e=>{ setCloudStatus("error"); setCloudError(e.message); });
+        }
+      })
+      .catch(e=>{ setCloudStatus("error"); setCloudError(e.message); });
   }
 
-  // load from Supabase on mount
+  // try cloud sync in background — app is already usable from localStorage
   useEffect(()=>{ doSync(); }, []);
 
   const update = (proj)=>{
