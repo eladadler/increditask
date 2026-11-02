@@ -12,6 +12,49 @@
     html,body{min-height:100dvh;overflow-x:hidden}
     body{font-family:'Rubik',sans-serif;background:#fffcf4;color:#1a0e04;direction:rtl}
 
+    /* ===== SURPRISE SCREEN ===== */
+    #surprise{
+      position:fixed;inset:0;z-index:999;
+      background:radial-gradient(ellipse at center,#1a0a2e 0%,#0a0015 100%);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      cursor:pointer;user-select:none;
+      transition:opacity .8s ease;
+    }
+    #surprise.hiding{opacity:0;pointer-events:none}
+    #surprise canvas{position:absolute;inset:0;width:100%;height:100%}
+    .surprise-content{position:relative;z-index:2;text-align:center;padding:20px}
+    .s-num{
+      font-family:'Noto Serif Hebrew',serif;
+      font-size:clamp(90px,28vw,180px);font-weight:900;line-height:1;
+      color:#ffd700;
+      text-shadow:0 0 40px rgba(255,215,0,.6),0 0 80px rgba(255,180,0,.3);
+      animation:numPulse 2s ease-in-out infinite alternate;
+    }
+    @keyframes numPulse{from{text-shadow:0 0 40px rgba(255,215,0,.6),0 0 80px rgba(255,180,0,.3)}to{text-shadow:0 0 60px rgba(255,215,0,.9),0 0 120px rgba(255,200,0,.5)}}
+    .s-title{
+      font-family:'Noto Serif Hebrew',serif;
+      font-size:clamp(22px,6vw,38px);font-weight:700;color:#fff;
+      margin-top:10px;margin-bottom:6px;
+      text-shadow:0 2px 20px rgba(255,215,0,.4);
+    }
+    .s-name{
+      font-family:'Noto Serif Hebrew',serif;
+      font-size:clamp(32px,9vw,64px);font-weight:900;
+      color:#ffd700;
+      text-shadow:0 0 30px rgba(255,215,0,.5);
+      margin-bottom:32px;
+    }
+    .s-tap{
+      display:inline-flex;align-items:center;gap:10px;
+      background:rgba(255,215,0,.15);
+      border:1.5px solid rgba(255,215,0,.5);
+      color:#ffd700;border-radius:50px;
+      padding:14px 30px;font-size:16px;font-family:'Rubik',sans-serif;
+      animation:tapBounce 1.6s ease-in-out infinite;
+      backdrop-filter:blur(6px);
+    }
+    @keyframes tapBounce{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
     /* confetti */
     #confetti{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
     .dot{position:absolute;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite alternate}
@@ -121,6 +164,16 @@
   </style>
 </head>
 <body>
+<div id="surprise">
+  <canvas id="fw-canvas"></canvas>
+  <div class="surprise-content">
+    <div class="s-num">35</div>
+    <div class="s-title">יום הולדת שמח</div>
+    <div class="s-name">זאבי! 🎉</div>
+    <div class="s-tap">✨ לחץ לגלות את ההפתעה ✨</div>
+  </div>
+</div>
+
 <div id="confetti"></div>
 
 <div class="hero">
@@ -283,6 +336,116 @@ document.addEventListener('touchend',e=>{
   const dx=e.changedTouches[0].clientX-tx;
   if(Math.abs(dx)>50) navigate(dx<0?1:-1);
 },{passive:true});
+
+/* ===== FIREWORKS ===== */
+(function(){
+  const el=document.getElementById('surprise');
+  if(!el) return;
+
+  /* skip if already seen */
+  try{ if(localStorage.getItem('zeev-seen')){ el.remove(); load(); return; } }catch(e){}
+
+  const canvas=document.getElementById('fw-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,particles=[],rockets=[];
+
+  function resize(){ W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
+  resize(); window.addEventListener('resize',resize);
+
+  const COLORS=['#ffd700','#ff6b6b','#4ecdc4','#a8e6cf','#ff8b94','#ffaaa5','#ffd3b6','#ffffff','#c3a5ff'];
+
+  function spawnRocket(){
+    rockets.push({
+      x: W*(.15+Math.random()*.7),
+      y: H,
+      tx: W*(.1+Math.random()*.8),
+      ty: H*(.1+Math.random()*.35),
+      speed:18+Math.random()*10,
+      color:COLORS[0|Math.random()*COLORS.length],
+      trail:[]
+    });
+  }
+
+  function explode(x,y,color){
+    const count=90+0|Math.random()*40;
+    for(let i=0;i<count;i++){
+      const angle=Math.PI*2*i/count+Math.random()*.15;
+      const spd=2+Math.random()*5;
+      particles.push({
+        x,y,
+        vx:Math.cos(angle)*spd,
+        vy:Math.sin(angle)*spd,
+        life:1,
+        decay:.012+Math.random()*.016,
+        size:2+Math.random()*2.5,
+        color,
+        gravity:.06
+      });
+    }
+    /* sparkle ring */
+    for(let i=0;i<24;i++){
+      const angle=Math.PI*2*i/24;
+      particles.push({
+        x,y,
+        vx:Math.cos(angle)*8,
+        vy:Math.sin(angle)*8,
+        life:1,decay:.025,size:1.5,
+        color:'#fff',gravity:.04
+      });
+    }
+  }
+
+  let lastRocket=0, raf;
+  function frame(t){
+    ctx.fillStyle='rgba(10,0,21,.18)';
+    ctx.fillRect(0,0,W,H);
+
+    /* spawn rockets periodically */
+    if(t-lastRocket>480){ spawnRocket(); lastRocket=t; }
+
+    /* move rockets */
+    rockets=rockets.filter(r=>{
+      r.trail.push({x:r.x,y:r.y});
+      if(r.trail.length>12) r.trail.shift();
+      const dx=r.tx-r.x, dy=r.ty-r.y;
+      const dist=Math.hypot(dx,dy);
+      if(dist<r.speed){ explode(r.x,r.y,r.color); return false; }
+      r.x+=dx/dist*r.speed; r.y+=dy/dist*r.speed;
+      /* trail */
+      r.trail.forEach((p,i)=>{
+        const a=i/r.trail.length*.6;
+        ctx.globalAlpha=a; ctx.fillStyle=r.color;
+        ctx.beginPath(); ctx.arc(p.x,p.y,2,0,Math.PI*2); ctx.fill();
+      });
+      ctx.globalAlpha=1; ctx.fillStyle=r.color;
+      ctx.beginPath(); ctx.arc(r.x,r.y,3,0,Math.PI*2); ctx.fill();
+      return true;
+    });
+
+    /* move particles */
+    particles=particles.filter(p=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=p.gravity;
+      p.vx*=.97; p.vy*=.97;
+      p.life-=p.decay;
+      ctx.globalAlpha=Math.max(0,p.life);
+      ctx.fillStyle=p.color;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
+      return p.life>0;
+    });
+    ctx.globalAlpha=1;
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+
+  function dismiss(){
+    try{ localStorage.setItem('zeev-seen','1'); }catch(e){}
+    cancelAnimationFrame(raf);
+    el.classList.add('hiding');
+    setTimeout(()=>{ el.remove(); load(); },850);
+  }
+  el.addEventListener('click', dismiss);
+  el.addEventListener('touchend', e=>{ e.preventDefault(); dismiss(); });
+})();
 
 load();
 setInterval(async()=>{
