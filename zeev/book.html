@@ -58,11 +58,24 @@
 
     .cake-wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center}
 
+    /* tier-1 wraps the candles so they sit ON the cake */
+    .tier1-wrap{display:inline-flex;flex-direction:column;align-items:center;width:min(300px,82vw)}
+
     /* candles */
-    .candles-row{display:flex;gap:10px;align-items:flex-end;margin-bottom:0;padding:0 4px;flex-wrap:wrap;justify-content:center;max-width:340px}
+    .candles-row{display:flex;gap:8px;align-items:flex-end;padding:0 4px;justify-content:center;width:100%}
     .candle{
       display:flex;flex-direction:column;align-items:center;
       width:16px;position:relative;
+    }
+    /* special "3" and "5" candles */
+    .candle-special{width:28px}
+    .candle-body-special{
+      width:26px;height:58px;border-radius:4px 4px 2px 2px;
+      background:linear-gradient(135deg,#ffe566,#ffd700,#ffaa00,#ffd700);
+      font-family:'Noto Serif Hebrew',serif;font-size:24px;font-weight:900;
+      color:#7a4000;display:flex;align-items:center;justify-content:center;
+      text-shadow:0 1px 0 rgba(255,255,255,.4);
+      box-shadow:inset -2px 0 4px rgba(0,0,0,.15);
     }
     .flame-wrap{height:26px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
     .flame{
@@ -244,10 +257,11 @@
 
 <!-- SCREEN 2: cake + blow -->
 <div id="screen-cake" class="overlay" style="display:none">
-  <canvas id="fw-canvas"></canvas>
   <div class="cake-wrap">
-    <div class="candles-row" id="candles-row"></div>
-    <div class="cake-tier tier-1"></div>
+    <div class="tier1-wrap">
+      <div class="candles-row" id="candles-row"></div>
+      <div class="cake-tier tier-1"></div>
+    </div>
     <div class="cake-tier tier-2"></div>
     <div class="cake-tier tier-3"></div>
     <div class="cake-plate"></div>
@@ -302,100 +316,29 @@
 
 /* ===== CANDLES ===== */
 const CANDLE_COLORS=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6bdb','#ff9f43','#54a0ff','#b794f4','#48dbfb','#ff9ff3','#ffeaa7','#fd79a8','#00b894','#e17055','#fdcb6e'];
-const NUM_CANDLES=14;
+const NUM_CANDLES=10; /* 4 regular + "3" + "5" + 4 regular */
 
 (function buildCandles(){
   const row=document.getElementById('candles-row');
-  for(let i=0;i<NUM_CANDLES;i++){
+  function mkRegular(i){
     const c=document.createElement('div'); c.className='candle';
-    const color=CANDLE_COLORS[i%CANDLE_COLORS.length];
+    const col=CANDLE_COLORS[i%CANDLE_COLORS.length];
     const dur=(.22+Math.random()*.14).toFixed(2)+'s';
-    c.innerHTML=`
-      <div class="flame-wrap">
-        <div class="smoke"></div>
-        <div class="flame" style="--fd:${dur}"></div>
-      </div>
-      <div class="wick"></div>
-      <div class="candle-body" style="background:linear-gradient(to right,${color}cc,${color},${color}cc)"></div>`;
-    row.appendChild(c);
+    c.innerHTML=`<div class="flame-wrap"><div class="smoke"></div><div class="flame" style="--fd:${dur}"></div></div><div class="wick"></div><div class="candle-body" style="background:linear-gradient(to right,${col}cc,${col},${col}cc)"></div>`;
+    return c;
   }
+  function mkSpecial(digit){
+    const c=document.createElement('div'); c.className='candle candle-special';
+    const dur=(.20+Math.random()*.12).toFixed(2)+'s';
+    c.innerHTML=`<div class="flame-wrap"><div class="smoke"></div><div class="flame" style="--fd:${dur};width:13px;height:20px"></div></div><div class="wick"></div><div class="candle-body-special">${digit}</div>`;
+    return c;
+  }
+  for(let i=0;i<4;i++) row.appendChild(mkRegular(i));
+  row.appendChild(mkSpecial('3'));
+  row.appendChild(mkSpecial('5'));
+  for(let i=4;i<8;i++) row.appendChild(mkRegular(i));
 })();
 
-/* ===== FIREWORKS canvas (for cake screen) ===== */
-(function(){
-  const canvas=document.getElementById('fw-canvas');
-  const ctx=canvas.getContext('2d');
-  let W,H,particles=[],rockets=[],raf,running=false;
-  const COLORS=['#ffd700','#ff6b6b','#4ecdc4','#a8e6cf','#ff8b94','#c3a5ff','#ffffff'];
-
-  window._fwCanvas={
-    start(){
-      running=true;
-      resize();
-      window.addEventListener('resize',resize);
-      raf=requestAnimationFrame(frame);
-    },
-    stop(){ running=false; cancelAnimationFrame(raf); window.removeEventListener('resize',resize); }
-  };
-
-  function resize(){ W=canvas.width=canvas.offsetWidth; H=canvas.height=canvas.offsetHeight; }
-
-  function spawnRocket(){
-    rockets.push({
-      x:W*(.1+Math.random()*.8), y:H,
-      tx:W*(.1+Math.random()*.8), ty:H*(.08+Math.random()*.35),
-      speed:16+Math.random()*10,
-      color:COLORS[0|Math.random()*COLORS.length], trail:[]
-    });
-  }
-
-  function explode(x,y,color){
-    for(let i=0;i<90;i++){
-      const a=Math.PI*2*i/90+Math.random()*.1, spd=2+Math.random()*5;
-      particles.push({x,y,vx:Math.cos(a)*spd,vy:Math.sin(a)*spd,life:1,
-        decay:.013+Math.random()*.014,size:1.8+Math.random()*2,color,gravity:.06});
-    }
-    for(let i=0;i<20;i++){
-      const a=Math.PI*2*i/20;
-      particles.push({x,y,vx:Math.cos(a)*9,vy:Math.sin(a)*9,life:1,
-        decay:.03,size:1.2,color:'#fff',gravity:.04});
-    }
-  }
-
-  let lastRocket=0;
-  function frame(t){
-    if(!running) return;
-    ctx.fillStyle='rgba(6,0,15,.17)';
-    ctx.fillRect(0,0,W,H);
-    if(t-lastRocket>500){ spawnRocket(); lastRocket=t; }
-
-    rockets=rockets.filter(r=>{
-      r.trail.push({x:r.x,y:r.y});
-      if(r.trail.length>10) r.trail.shift();
-      const dx=r.tx-r.x, dy=r.ty-r.y, dist=Math.hypot(dx,dy);
-      if(dist<r.speed){ explode(r.x,r.y,r.color); return false; }
-      r.x+=dx/dist*r.speed; r.y+=dy/dist*r.speed;
-      r.trail.forEach((p,i)=>{
-        ctx.globalAlpha=i/r.trail.length*.5; ctx.fillStyle=r.color;
-        ctx.beginPath(); ctx.arc(p.x,p.y,1.5,0,Math.PI*2); ctx.fill();
-      });
-      ctx.globalAlpha=1; ctx.fillStyle=r.color;
-      ctx.beginPath(); ctx.arc(r.x,r.y,2.5,0,Math.PI*2); ctx.fill();
-      return true;
-    });
-
-    particles=particles.filter(p=>{
-      p.x+=p.vx; p.y+=p.vy; p.vy+=p.gravity; p.vx*=.97; p.vy*=.97;
-      p.life-=p.decay;
-      ctx.globalAlpha=Math.max(0,p.life);
-      ctx.fillStyle=p.color;
-      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fill();
-      return p.life>0;
-    });
-    ctx.globalAlpha=1;
-    raf=requestAnimationFrame(frame);
-  }
-})();
 
 /* ===== BLOW DETECTION ===== */
 let audioCtx, analyser, audioData, blowRaf;
@@ -460,7 +403,6 @@ function onAllOut(){
 function enterBook(){
   const cake=document.getElementById('screen-cake');
   cake.classList.add('hiding');
-  _fwCanvas.stop();
   setTimeout(()=>{
     cake.style.display='none';
     document.getElementById('book-content').style.display='block';
@@ -476,7 +418,6 @@ function showCake(stream){
     document.getElementById('screen-perm').style.display='none';
     const cake=document.getElementById('screen-cake');
     cake.style.display='flex';
-    _fwCanvas.start();
     if(stream) startBlowDetection(stream);
     else {
       /* no mic: just tap to continue */
