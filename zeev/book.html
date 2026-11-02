@@ -26,22 +26,19 @@
     .hero-sub{font-size:13.5px;color:#b07830;opacity:.6;letter-spacing:.5px}
     .hero-line{display:block;width:60px;height:1.5px;background:linear-gradient(90deg,transparent,rgba(200,144,10,.35),transparent);margin:18px auto 0}
 
-    /* book viewer */
+    /* viewer */
     .viewer{position:relative;z-index:1;padding:28px 20px 60px;max-width:560px;margin:0 auto}
 
     /* stacked pages illusion */
     .pages-wrap{position:relative}
-    .pages-wrap::before,.pages-wrap::after{
-      content:'';position:absolute;border-radius:20px;background:#f0dfc0;
-      box-shadow:0 2px 8px rgba(150,90,0,.08)
-    }
+    .pages-wrap::before,.pages-wrap::after{content:'';position:absolute;border-radius:20px}
     .pages-wrap::before{inset:5px -5px -5px 5px;z-index:-1;background:#ede0bf}
     .pages-wrap::after{inset:9px -9px -9px 9px;z-index:-2;background:#e8d8b0}
 
-    /* the stage where cards live */
-    .stage{perspective:1600px;position:relative}
+    /* stage: the 3D viewport */
+    .stage{position:relative}
 
-    /* the card — both states */
+    /* card */
     .book-card{
       position:relative;
       background:#fff;
@@ -49,38 +46,39 @@
       overflow:hidden;
       box-shadow:0 8px 48px rgba(150,90,0,.16),0 2px 8px rgba(150,90,0,.08);
       border-top:4px solid #c8900a;
-      will-change:transform;
     }
 
-    /* fold-shadow overlay */
-    .fold-shadow{
-      position:absolute;inset:0;pointer-events:none;z-index:20;border-radius:20px;
-      background:linear-gradient(to left,rgba(0,0,0,.15),transparent 55%);
-      opacity:0;transition:opacity .05s;
+    /* page-flip animation on the outgoing card */
+    .page-out-next{
+      position:absolute;inset:0;z-index:5;
+      backface-visibility:hidden;
+      transform-origin:right center;
+      animation:pageOutNext .65s cubic-bezier(.4,0,.55,1) forwards;
+    }
+    .page-out-prev{
+      position:absolute;inset:0;z-index:5;
+      backface-visibility:hidden;
+      transform-origin:left center;
+      animation:pageOutPrev .65s cubic-bezier(.4,0,.55,1) forwards;
     }
 
-    /* animations — out (next = page turns leftward for RTL Hebrew) */
-    .flip-out-next{animation:outNext .34s cubic-bezier(.55,0,1,.7) forwards}
-    .flip-out-prev{animation:outPrev .34s cubic-bezier(.55,0,1,.7) forwards}
-    @keyframes outNext{
-      0%  {transform:perspective(900px) rotateY(0deg);opacity:1}
-      100%{transform:perspective(900px) rotateY(-80deg);opacity:.15}
+    @keyframes pageOutNext{
+      0%  {transform:perspective(1200px) rotateY(0deg);}
+      48% {transform:perspective(1200px) rotateY(90deg);}
+      100%{transform:perspective(1200px) rotateY(175deg);opacity:0;}
     }
-    @keyframes outPrev{
-      0%  {transform:perspective(900px) rotateY(0deg);opacity:1}
-      100%{transform:perspective(900px) rotateY(80deg);opacity:.15}
+    @keyframes pageOutPrev{
+      0%  {transform:perspective(1200px) rotateY(0deg);}
+      48% {transform:perspective(1200px) rotateY(-90deg);}
+      100%{transform:perspective(1200px) rotateY(-175deg);opacity:0;}
     }
 
-    /* animations — in */
-    .flip-in-next{animation:inNext .38s cubic-bezier(0,.3,.4,1) forwards}
-    .flip-in-prev{animation:inPrev .38s cubic-bezier(0,.3,.4,1) forwards}
-    @keyframes inNext{
-      0%  {transform:perspective(900px) rotateY(80deg);opacity:.15}
-      100%{transform:perspective(900px) rotateY(0deg);opacity:1}
-    }
-    @keyframes inPrev{
-      0%  {transform:perspective(900px) rotateY(-80deg);opacity:.15}
-      100%{transform:perspective(900px) rotateY(0deg);opacity:1}
+    /* shadow that fades as the new card is revealed */
+    @keyframes revealShadow{from{opacity:1}to{opacity:0}}
+    .reveal-shadow{
+      position:absolute;inset:0;border-radius:20px;pointer-events:none;z-index:3;
+      background:rgba(0,0,0,.18);
+      animation:revealShadow .65s ease-out forwards;
     }
 
     /* card content */
@@ -172,8 +170,6 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);
 
 function buildCard(b){
   const card=document.createElement('div'); card.className='book-card';
-  /* fold shadow overlay */
-  const shadow=document.createElement('div'); shadow.className='fold-shadow'; card.appendChild(shadow);
   if(b.media_url){
     const mw=document.createElement('div'); mw.className='card-media-wrap';
     if(b.media_type==='video'){
@@ -196,55 +192,69 @@ function buildCard(b){
   return card;
 }
 
-function updateDots(){
-  const max=Math.min(blessings.length,12);
-  const dots=document.getElementById('dots');
-  dots.innerHTML='';
-  if(blessings.length<=1){return;}
-  for(let i=0;i<max;i++){
-    const d=document.createElement('div'); d.className='counter-dot'+(i===idx%max?' active':'');
-    dots.appendChild(d);
-  }
-}
-
-function showCard(animClass){
-  const stage=document.getElementById('stage');
-  const card=buildCard(blessings[idx]);
-  if(animClass) card.classList.add(animClass);
-  stage.innerHTML=''; stage.appendChild(card);
+function updateUI(){
   document.getElementById('nav-num').textContent=(idx+1)+' / '+blessings.length;
   document.getElementById('btn-prev').disabled=blessings.length<=1;
   document.getElementById('btn-next').disabled=blessings.length<=1;
-  updateDots();
+  const max=Math.min(blessings.length,12);
+  const dots=document.getElementById('dots');
+  dots.innerHTML='';
+  if(blessings.length>1){
+    for(let i=0;i<max;i++){
+      const d=document.createElement('div'); d.className='counter-dot'+(i===idx%max?' active':'');
+      dots.appendChild(d);
+    }
+  }
+}
+
+function showCard(){
+  const stage=document.getElementById('stage');
+  stage.innerHTML='';
+  stage.appendChild(buildCard(blessings[idx]));
+  updateUI();
 }
 
 function navigate(dir){
   if(busy||blessings.length<=1) return;
   busy=true;
+
   const stage=document.getElementById('stage');
-  const cur=stage.firstChild;
-  if(!cur){busy=false;return;}
+  const curCard=stage.firstChild;
+  if(!curCard){busy=false;return;}
 
-  /* show fold-shadow as page turns */
-  const shadow=cur.querySelector('.fold-shadow');
-  const outClass=dir>0?'flip-out-next':'flip-out-prev';
-  cur.classList.add(outClass);
-  if(shadow) shadow.style.opacity='1';
+  const newIdx=(idx+dir+blessings.length)%blessings.length;
 
+  /* 1. lock stage height to prevent layout jump */
+  stage.style.height=curCard.offsetHeight+'px';
+
+  /* 2. build new card (placed first = visually behind curCard) */
+  const newCard=buildCard(blessings[newIdx]);
+
+  /* 3. add fading shadow overlay on new card so it looks revealed */
+  const shd=document.createElement('div'); shd.className='reveal-shadow';
+  newCard.appendChild(shd);
+  stage.insertBefore(newCard, curCard);
+
+  /* 4. lift curCard to absolute so it floats over newCard */
+  curCard.style.position='absolute';
+  curCard.style.top='0'; curCard.style.left='0'; curCard.style.right='0';
+  curCard.style.zIndex='5';
+
+  /* 5. flip curCard away */
+  requestAnimationFrame(()=>{
+    curCard.classList.add(dir>0?'page-out-next':'page-out-prev');
+  });
+
+  /* 6. after flip: clean up, settle into new card */
   setTimeout(()=>{
-    idx=(idx+dir+blessings.length)%blessings.length;
-    const inClass=dir>0?'flip-in-next':'flip-in-prev';
-    showCard(inClass);
-    setTimeout(()=>{
-      const newCard=stage.firstChild;
-      if(newCard){
-        newCard.classList.remove(inClass);
-        const s=newCard.querySelector('.fold-shadow');
-        if(s) s.style.opacity='0';
-      }
-      busy=false;
-    }, 400);
-  }, 340);
+    idx=newIdx;
+    curCard.remove();
+    shd.remove();
+    newCard.style.cssText=''; /* restore to normal flow */
+    stage.style.height='';
+    updateUI();
+    busy=false;
+  }, 680);
 }
 
 async function load(){
@@ -252,13 +262,9 @@ async function load(){
     const data=shuffle(await ZeevApp.loadBlessings());
     document.getElementById('loader').style.display='none';
     if(!data.length){document.getElementById('empty').style.display='block';return;}
-    blessings=data; idx=0;
+    blessings=data;
     document.getElementById('viewer').style.display='block';
-    showCard('flip-in-next');
-    setTimeout(()=>{
-      const c=document.getElementById('stage').firstChild;
-      if(c) c.classList.remove('flip-in-next');
-    },420);
+    showCard();
   }catch(e){
     document.getElementById('loader').innerHTML='<span style="color:#c04020;font-size:14px">שגיאה: '+e.message+'</span>';
   }
@@ -281,7 +287,7 @@ document.addEventListener('touchend',e=>{
 load();
 setInterval(async()=>{
   const data=await ZeevApp.loadBlessings().catch(()=>null);
-  if(data&&data.length!==blessings.length){blessings=shuffle(data);idx=0;showCard('flip-in-next');}
+  if(data&&data.length!==blessings.length){blessings=shuffle(data);idx=0;showCard();}
 },60000);
 </script>
 </body>
