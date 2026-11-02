@@ -3,63 +3,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>יום הולדת שמח זאב ✦</title>
+  <title>יום הולדת שמח זאבי ✦</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&family=Noto+Serif+Hebrew:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    html,body{min-height:100dvh}
-    body{font-family:'Rubik',sans-serif;background:#0b0705;color:#f0dfc0;direction:rtl;overflow-x:hidden}
+    html,body{min-height:100dvh;overflow-x:hidden}
+    body{font-family:'Rubik',sans-serif;background:#fffcf4;color:#1a0e04;direction:rtl}
 
-    /* ---- stars ---- */
-    #stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-    .star{position:absolute;background:#f5c842;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite alternate}
-    @keyframes twinkle{from{opacity:.05;transform:scale(1)}to{opacity:.55;transform:scale(1.4)}}
+    /* confetti dots */
+    #confetti{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .dot{position:absolute;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite alternate}
+    @keyframes twinkle{from{opacity:.06}to{opacity:.35}}
 
-    /* ---- hero ---- */
-    .hero{position:relative;z-index:1;text-align:center;padding:60px 20px 48px}
-    .hero-sparkle{font-size:18px;color:#f5c842;letter-spacing:12px;opacity:.65;display:block;margin-bottom:18px}
-    .hero-title{font-family:'Noto Serif Hebrew',serif;font-size:clamp(28px,7vw,52px);font-weight:900;color:#f5c842;line-height:1.2;margin-bottom:10px;text-shadow:0 0 60px rgba(245,200,60,.25)}
-    .hero-name{font-family:'Noto Serif Hebrew',serif;font-size:clamp(42px,11vw,80px);font-weight:900;color:#f9e060;line-height:1;margin-bottom:16px;text-shadow:0 0 80px rgba(249,224,96,.35)}
-    .hero-sub{font-size:15px;color:rgba(240,200,130,.5);letter-spacing:.5px}
-    .hero-line{display:block;width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(245,200,60,.4),transparent);margin:20px auto 0}
+    /* hero */
+    .hero{position:relative;z-index:1;text-align:center;padding:52px 20px 32px}
+    .hero-sparkle{font-size:16px;color:#c8900a;letter-spacing:12px;opacity:.6;display:block;margin-bottom:16px}
+    .hero-title{font-family:'Noto Serif Hebrew',serif;font-size:clamp(20px,5vw,34px);font-weight:700;color:#8a5e08;margin-bottom:4px}
+    .hero-num{font-family:'Noto Serif Hebrew',serif;font-size:clamp(72px,22vw,140px);font-weight:900;line-height:1;color:#c8900a;display:block;margin:0 auto 4px;letter-spacing:-2px;text-shadow:0 4px 32px rgba(200,144,10,.18)}
+    .hero-name{font-family:'Noto Serif Hebrew',serif;font-size:clamp(32px,9vw,60px);font-weight:900;color:#6a4008;line-height:1.15;margin-bottom:10px}
+    .hero-sub{font-size:14px;color:#b07830;opacity:.65;letter-spacing:.5px}
+    .hero-line{display:block;width:60px;height:1.5px;background:linear-gradient(90deg,transparent,rgba(200,144,10,.35),transparent);margin:20px auto 0}
 
-    /* ---- cards grid ---- */
-    .grid-wrap{position:relative;z-index:1;padding:0 16px 60px;max-width:1100px;margin:0 auto}
-    .grid{columns:1;column-gap:18px}
-    @media(min-width:520px){.grid{columns:2}}
-    @media(min-width:820px){.grid{columns:3}}
+    /* book viewer */
+    .viewer{position:relative;z-index:1;padding:24px 16px 60px;max-width:600px;margin:0 auto}
+    .stage{perspective:1200px;min-height:200px}
+    .book-card{
+      background:#fff;border-radius:20px;overflow:hidden;
+      box-shadow:0 8px 40px rgba(160,100,10,.14),0 2px 8px rgba(160,100,10,.08);
+      border-top:4px solid #c8900a;
+      transform-origin:center center;
+      animation:flipIn .45s cubic-bezier(.4,0,.2,1) both;
+    }
+    @keyframes flipIn{from{transform:rotateY(-90deg);opacity:0}to{transform:rotateY(0);opacity:1}}
+    @keyframes flipInPrev{from{transform:rotateY(90deg);opacity:0}to{transform:rotateY(0);opacity:1}}
+    @keyframes flipOut{from{transform:rotateY(0);opacity:1}to{transform:rotateY(90deg);opacity:0}}
+    @keyframes flipOutNext{from{transform:rotateY(0);opacity:1}to{transform:rotateY(-90deg);opacity:0}}
 
-    .card{break-inside:avoid;margin-bottom:18px;background:rgba(245,200,60,.05);border:1px solid rgba(245,200,60,.14);border-radius:18px;overflow:hidden;animation:fadeUp .5s ease both}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+    .card-media-wrap{overflow:hidden;max-height:320px}
+    .card-media{width:100%;display:block;object-fit:cover;max-height:320px}
+    video.card-media{background:#f5e8cc}
+    .card-body{padding:22px 22px 26px}
+    .card-sender{font-family:'Noto Serif Hebrew',serif;font-size:16px;font-weight:700;color:#c8900a;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+    .card-sender::before{content:'✦';font-size:10px;opacity:.7}
+    .card-msg{font-size:15px;line-height:1.75;color:#3a2408;white-space:pre-wrap;word-break:break-word}
 
-    .card-media{width:100%;display:block;object-fit:cover;max-height:300px}
-    video.card-media{max-height:280px;background:#0a0604}
-    .card-media-wrap{overflow:hidden;border-radius:0}
+    /* navigation */
+    .nav{display:flex;align-items:center;justify-content:center;gap:16px;margin-top:20px}
+    .nav-btn{width:44px;height:44px;border-radius:50%;border:1.5px solid rgba(200,144,10,.35);background:#fff;color:#c8900a;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,border-color .15s;box-shadow:0 2px 8px rgba(160,100,10,.08)}
+    .nav-btn:hover{background:#fffbf0;border-color:rgba(200,144,10,.65)}
+    .nav-btn:disabled{opacity:.25;cursor:not-allowed}
+    .nav-counter{font-size:13px;color:#b07030;min-width:60px;text-align:center;font-weight:500}
 
-    .card-body{padding:16px 16px 18px}
-    .card-name{font-family:'Noto Serif Hebrew',serif;font-size:15px;font-weight:700;color:#f5c842;margin-bottom:8px;display:flex;align-items:center;gap:6px}
-    .card-name::before{content:'✦';font-size:9px;opacity:.7}
-    .card-msg{font-size:14.5px;line-height:1.7;color:rgba(240,210,160,.82);white-space:pre-wrap;word-break:break-word}
-
-    /* ---- loading & empty ---- */
-    .loader{position:relative;z-index:1;text-align:center;padding:80px 20px;color:rgba(245,200,60,.5)}
-    .loader-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f5c842;margin:0 4px;animation:bounce 1.2s ease-in-out infinite}
+    /* states */
+    .loader{position:relative;z-index:1;text-align:center;padding:80px 20px}
+    .loader-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#c8900a;margin:0 4px;animation:bounce 1.2s ease-in-out infinite}
     .loader-dot:nth-child(2){animation-delay:.2s}
     .loader-dot:nth-child(3){animation-delay:.4s}
-    @keyframes bounce{0%,80%,100%{transform:scale(.7);opacity:.4}40%{transform:scale(1.1);opacity:1}}
-
-    .empty{position:relative;z-index:1;text-align:center;padding:60px 20px;color:rgba(240,200,130,.4);font-size:15px}
+    @keyframes bounce{0%,80%,100%{transform:scale(.6);opacity:.3}40%{transform:scale(1.1);opacity:1}}
+    .empty{position:relative;z-index:1;text-align:center;padding:60px 20px;color:#c8a060;font-size:15px}
   </style>
 </head>
 <body>
-<div id="stars"></div>
+<div id="confetti"></div>
 
 <div class="hero">
   <span class="hero-sparkle">✦ ✦ ✦</span>
   <div class="hero-title">יום הולדת שמח</div>
-  <div class="hero-name">זאב</div>
+  <span class="hero-num">35</span>
+  <div class="hero-name">זאבי</div>
   <div class="hero-sub">מאוהביו ומחבריו</div>
   <span class="hero-line"></span>
 </div>
@@ -67,82 +80,120 @@
 <div id="loader" class="loader">
   <div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div>
 </div>
-<div class="grid-wrap" id="grid-wrap" style="display:none">
-  <div class="grid" id="grid"></div>
+
+<div class="viewer" id="viewer" style="display:none">
+  <div class="stage" id="stage"></div>
+  <div class="nav">
+    <button class="nav-btn" id="btn-prev" onclick="navigate(-1)" title="הקודם">‹</button>
+    <span class="nav-counter" id="counter"></span>
+    <button class="nav-btn" id="btn-next" onclick="navigate(1)" title="הבא">›</button>
+  </div>
 </div>
 <div class="empty" id="empty" style="display:none">עוד אין ברכות — הן בדרך ✦</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="zeev.js?v=1"></script>
+<script src="zeev.js?v=2"></script>
 <script>
-  /* stars */
+  /* confetti dots */
   (function(){
-    const c = document.getElementById('stars');
-    for(let i=0;i<70;i++){
-      const s = document.createElement('div');
-      s.className = 'star';
-      const sz = .8 + Math.random()*2.2;
-      s.style.cssText = `left:${Math.random()*100}vw;top:${Math.random()*100}vh;width:${sz}px;height:${sz}px;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*5}s`;
-      c.appendChild(s);
+    const c = document.getElementById('confetti');
+    const colors = ['#c8900a','#e8b820','#8a5e08','#d4a830','#f0cc60'];
+    for(let i=0;i<55;i++){
+      const d = document.createElement('div');
+      d.className = 'dot';
+      const sz = 2 + Math.random()*4;
+      d.style.cssText = `left:${Math.random()*100}vw;top:${Math.random()*100}vh;width:${sz}px;height:${sz}px;background:${colors[i%colors.length]};--d:${2+Math.random()*4}s;animation-delay:${Math.random()*5}s`;
+      c.appendChild(d);
     }
   })();
 
-  /* shuffle */
+  let blessings = [], idx = 0, animating = false;
+
   function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]]} return a; }
 
-  function renderCard(b, delay){
-    const wrap = document.createElement('div');
-    wrap.className = 'card';
-    wrap.style.animationDelay = delay + 'ms';
+  function buildCard(b){
+    const card = document.createElement('div');
+    card.className = 'book-card';
     if(b.media_url){
-      const mw = document.createElement('div');
-      mw.className = 'card-media-wrap';
-      if(b.media_type === 'video'){
+      const mw = document.createElement('div'); mw.className = 'card-media-wrap';
+      if(b.media_type==='video'){
         const v = document.createElement('video');
-        v.className = 'card-media'; v.src = b.media_url;
-        v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('controls','');
-        v.setAttribute('preload','metadata');
+        v.className='card-media'; v.src=b.media_url;
+        v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('controls',''); v.setAttribute('preload','metadata');
         mw.appendChild(v);
       } else {
         const img = document.createElement('img');
-        img.className = 'card-media'; img.src = b.media_url;
-        img.alt = 'תמונה מ-' + b.name; img.loading = 'lazy';
+        img.className='card-media'; img.src=b.media_url; img.alt='תמונה'; img.loading='lazy';
         mw.appendChild(img);
       }
-      wrap.appendChild(mw);
+      card.appendChild(mw);
     }
-    const body = document.createElement('div');
-    body.className = 'card-body';
-    const name = document.createElement('div');
-    name.className = 'card-name'; name.textContent = b.name;
+    const body = document.createElement('div'); body.className='card-body';
+    const name = document.createElement('div'); name.className='card-sender'; name.textContent=b.name;
     body.appendChild(name);
-    if(b.message){
-      const msg = document.createElement('div');
-      msg.className = 'card-msg'; msg.textContent = b.message;
-      body.appendChild(msg);
+    if(b.message){ const m=document.createElement('div'); m.className='card-msg'; m.textContent=b.message; body.appendChild(m); }
+    card.appendChild(body);
+    return card;
+  }
+
+  function showCard(animClass){
+    const stage = document.getElementById('stage');
+    const card = buildCard(blessings[idx]);
+    if(animClass) card.style.animation = animClass + ' .45s cubic-bezier(.4,0,.2,1) both';
+    stage.innerHTML = '';
+    stage.appendChild(card);
+    document.getElementById('counter').textContent = (idx+1) + ' / ' + blessings.length;
+    document.getElementById('btn-prev').disabled = blessings.length <= 1;
+    document.getElementById('btn-next').disabled = blessings.length <= 1;
+  }
+
+  function navigate(dir){
+    if(animating || blessings.length <= 1) return;
+    animating = true;
+    const stage = document.getElementById('stage');
+    const current = stage.firstChild;
+    if(current){
+      current.style.animation = (dir>0 ? 'flipOutNext' : 'flipOut') + ' .3s cubic-bezier(.4,0,.2,1) forwards';
+      setTimeout(()=>{
+        idx = (idx + dir + blessings.length) % blessings.length;
+        showCard(dir>0 ? 'flipIn' : 'flipInPrev');
+        animating = false;
+      }, 300);
     }
-    wrap.appendChild(body);
-    return wrap;
   }
 
   async function load(){
-    try {
+    try{
       const data = shuffle(await ZeevApp.loadBlessings());
       document.getElementById('loader').style.display = 'none';
-      if(!data.length){
-        document.getElementById('empty').style.display = 'block'; return;
-      }
-      const grid = document.getElementById('grid');
-      grid.innerHTML = '';
-      data.forEach((b,i) => grid.appendChild(renderCard(b, i*60)));
-      document.getElementById('grid-wrap').style.display = 'block';
-    } catch(e){
-      document.getElementById('loader').innerHTML = '<span style="color:rgba(255,130,100,.7);font-size:14px">שגיאה בטעינה: ' + e.message + '</span>';
+      if(!data.length){ document.getElementById('empty').style.display='block'; return; }
+      blessings = data; idx = 0;
+      document.getElementById('viewer').style.display = 'block';
+      showCard('flipIn');
+    }catch(e){
+      document.getElementById('loader').innerHTML = '<span style="color:#c04020;font-size:14px">שגיאה: '+e.message+'</span>';
     }
   }
 
+  /* keyboard navigation */
+  document.addEventListener('keydown', e=>{
+    if(e.key==='ArrowLeft') navigate(1);
+    if(e.key==='ArrowRight') navigate(-1);
+  });
+
+  /* swipe support */
+  let tx=0;
+  document.addEventListener('touchstart', e=>{ tx=e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', e=>{
+    const dx = e.changedTouches[0].clientX - tx;
+    if(Math.abs(dx)>50) navigate(dx<0?1:-1);
+  }, {passive:true});
+
   load();
-  setInterval(load, 60000);
+  setInterval(async ()=>{
+    const data = await ZeevApp.loadBlessings().catch(()=>null);
+    if(data && data.length !== blessings.length){ blessings = shuffle(data); idx=0; showCard('flipIn'); }
+  }, 60000);
 </script>
 </body>
 </html>

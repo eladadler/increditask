@@ -3,79 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>ברכה לזאב ✦</title>
+  <title>ברכה לזאבי ✦</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Noto+Serif+Hebrew:wght@400;700;900&display=swap" rel="stylesheet">
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{min-height:100dvh}
-    body{font-family:'Rubik',sans-serif;background:#0d0805;color:#f0e0c0;direction:rtl}
+    body{font-family:'Rubik',sans-serif;background:#fffcf4;color:#1a0e04;direction:rtl}
 
     .page{min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:36px 16px 56px}
     .container{width:100%;max-width:460px}
 
     .header{text-align:center;margin-bottom:32px}
-    .sparkle{font-size:22px;color:#f5c842;display:block;margin-bottom:14px;letter-spacing:10px;opacity:.8}
-    .main-title{font-family:'Noto Serif Hebrew',serif;font-size:26px;font-weight:900;color:#f5c842;line-height:1.35;margin-bottom:8px}
-    .subtitle{font-size:15px;color:rgba(240,210,150,.6);line-height:1.65}
+    .sparkle{font-size:18px;color:#c8900a;letter-spacing:10px;opacity:.7;display:block;margin-bottom:14px}
+    .main-title{font-family:'Noto Serif Hebrew',serif;font-size:26px;font-weight:900;color:#8a5e08;line-height:1.35;margin-bottom:8px}
+    .subtitle{font-size:15px;color:#b07830;opacity:.75;line-height:1.65}
 
-    .card{background:rgba(245,200,60,.04);border:1px solid rgba(245,200,60,.16);border-radius:20px;padding:26px 22px}
+    .card{background:#fff;border:1px solid rgba(200,144,10,.2);border-radius:20px;padding:26px 22px;box-shadow:0 4px 24px rgba(180,120,20,.08)}
 
     .field{margin-bottom:20px}
-    label{display:block;font-size:12.5px;font-weight:600;color:rgba(245,180,50,.7);margin-bottom:8px;letter-spacing:.4px}
+    label{display:block;font-size:12.5px;font-weight:600;color:#a06010;margin-bottom:8px;letter-spacing:.4px}
     input[type=text],textarea{
-      width:100%;background:rgba(245,200,60,.05);border:1px solid rgba(245,200,60,.18);
+      width:100%;background:#fffbf0;border:1px solid rgba(200,144,10,.25);
       border-radius:12px;padding:12px 14px;font-family:'Rubik',sans-serif;font-size:15px;
-      color:#f0e0c0;outline:none;transition:border-color .15s;direction:rtl
+      color:#1a0e04;outline:none;transition:border-color .15s;direction:rtl
     }
-    input[type=text]::placeholder,textarea::placeholder{color:rgba(240,190,100,.28)}
-    input[type=text]:focus,textarea:focus{border-color:rgba(245,200,60,.45)}
+    input[type=text]::placeholder,textarea::placeholder{color:#c8a86080}
+    input[type=text]:focus,textarea:focus{border-color:rgba(200,144,10,.5)}
     textarea{min-height:120px;resize:vertical;line-height:1.65}
 
-    .upload-zone{border:1.5px dashed rgba(245,200,60,.22);border-radius:12px;padding:22px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
-    .upload-zone:hover{border-color:rgba(245,200,60,.45);background:rgba(245,200,60,.04)}
-    .upload-icon{font-size:30px;margin-bottom:8px;opacity:.55}
-    .upload-lbl{font-size:14px;color:rgba(240,195,110,.55)}
-    .upload-lbl small{display:block;font-size:11.5px;margin-top:4px;opacity:.7}
+    .upload-zone{border:1.5px dashed rgba(200,144,10,.3);border-radius:12px;padding:22px;text-align:center;cursor:pointer;transition:border-color .15s,background .15s}
+    .upload-zone:hover{border-color:rgba(200,144,10,.55);background:rgba(200,144,10,.04)}
+    .upload-icon{font-size:28px;margin-bottom:8px;opacity:.5}
+    .upload-lbl{font-size:14px;color:#b07030;opacity:.7}
+    .upload-lbl small{display:block;font-size:11.5px;margin-top:4px;opacity:.75}
     input[type=file]{display:none}
 
     .preview-wrap{display:none;margin-top:12px;position:relative;border-radius:12px;overflow:hidden}
     .preview-wrap img,.preview-wrap video{width:100%;max-height:220px;object-fit:cover;display:block}
-    .remove-btn{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .remove-btn{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.5);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 
-    .err{color:#ff8870;font-size:13px;margin-top:6px;display:none}
+    .err{color:#c04020;font-size:13px;margin-top:6px;display:none}
 
-    .submit-btn{width:100%;background:linear-gradient(135deg,#f5c842,#e8a825);color:#180d00;border:none;border-radius:14px;padding:15px;font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:6px;letter-spacing:.3px}
+    .submit-btn{width:100%;background:linear-gradient(135deg,#e8a820,#c87808);color:#fff;border:none;border-radius:14px;padding:15px;font-family:'Rubik',sans-serif;font-size:16px;font-weight:700;cursor:pointer;transition:opacity .15s,transform .1s;margin-top:6px;letter-spacing:.3px;box-shadow:0 4px 16px rgba(200,120,8,.28)}
     .submit-btn:hover{opacity:.88}
     .submit-btn:active{transform:scale(.98)}
     .submit-btn:disabled{opacity:.45;cursor:not-allowed}
 
+    /* admin */
+    .admin-toggle{display:block;text-align:center;margin-top:36px;font-size:12px;color:rgba(160,96,16,.3);cursor:pointer;background:none;border:none;font-family:'Rubik',sans-serif;transition:color .15s}
+    .admin-toggle:hover{color:rgba(160,96,16,.6)}
+    .admin-panel{margin-top:20px;display:none}
+    .admin-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .admin-title{font-size:13px;font-weight:600;color:#a06010;letter-spacing:.4px}
+    .admin-count{font-size:12px;color:#c8a060}
+    .admin-loading{text-align:center;padding:24px;font-size:13px;color:#c8a060}
+    .admin-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:#fffbf0;border:1px solid rgba(200,144,10,.18);border-radius:12px;margin-bottom:10px}
+    .admin-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0}
+    .admin-thumb-empty{width:44px;height:44px;border-radius:8px;flex-shrink:0;background:rgba(200,144,10,.1);display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(200,144,10,.4)}
+    .admin-info{flex:1;min-width:0}
+    .admin-name{font-size:13px;font-weight:600;color:#8a5e08;margin-bottom:3px}
+    .admin-msg{font-size:12px;color:#b07030;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;opacity:.7}
+    .admin-del{background:none;border:1px solid rgba(192,64,32,.25);color:rgba(192,64,32,.6);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;flex-shrink:0;transition:background .15s,color .15s;font-family:'Rubik',sans-serif}
+    .admin-del:hover{background:rgba(192,64,32,.08);color:rgba(192,64,32,.9)}
+    .admin-empty{text-align:center;padding:24px;font-size:13px;color:#c8a060}
+
+    /* success */
     .success{display:none;text-align:center;padding:48px 16px}
     .s-star{font-size:54px;display:block;margin-bottom:18px;animation:pop .45s cubic-bezier(.4,0,.2,1.5) forwards}
     @keyframes pop{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
-    .s-title{font-family:'Noto Serif Hebrew',serif;font-size:24px;font-weight:900;color:#f5c842;margin-bottom:10px}
-    .s-sub{font-size:15px;color:rgba(240,210,150,.65);line-height:1.65}
-    .again-btn{margin-top:24px;background:none;border:1px solid rgba(245,200,60,.28);color:rgba(245,200,60,.75);border-radius:12px;padding:10px 22px;font-size:14px;cursor:pointer;font-family:'Rubik',sans-serif;transition:border-color .15s,color .15s}
-    .again-btn:hover{border-color:rgba(245,200,60,.55);color:rgba(245,200,60,1)}
-
-    /* admin */
-    .admin-toggle{display:block;text-align:center;margin-top:36px;font-size:12px;color:rgba(240,190,100,.28);cursor:pointer;background:none;border:none;font-family:'Rubik',sans-serif;transition:color .15s}
-    .admin-toggle:hover{color:rgba(240,190,100,.55)}
-    .admin-panel{margin-top:20px;display:none}
-    .admin-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
-    .admin-title{font-size:13px;font-weight:600;color:rgba(245,180,50,.6);letter-spacing:.4px}
-    .admin-count{font-size:12px;color:rgba(240,180,80,.4)}
-    .admin-loading{text-align:center;padding:24px;font-size:13px;color:rgba(240,190,100,.4)}
-    .admin-row{display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:rgba(245,200,60,.04);border:1px solid rgba(245,200,60,.1);border-radius:12px;margin-bottom:10px}
-    .admin-thumb{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:rgba(245,200,60,.08)}
-    .admin-thumb-empty{width:44px;height:44px;border-radius:8px;flex-shrink:0;background:rgba(245,200,60,.06);display:flex;align-items:center;justify-content:center;font-size:18px;color:rgba(245,200,60,.3)}
-    .admin-info{flex:1;min-width:0}
-    .admin-name{font-size:13px;font-weight:600;color:#f5c842;margin-bottom:3px}
-    .admin-msg{font-size:12px;color:rgba(240,200,140,.5);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .admin-del{background:none;border:1px solid rgba(255,100,80,.25);color:rgba(255,100,80,.55);border-radius:8px;padding:5px 10px;font-size:12px;cursor:pointer;flex-shrink:0;transition:background .15s,color .15s;font-family:'Rubik',sans-serif}
-    .admin-del:hover{background:rgba(255,80,60,.12);color:rgba(255,120,100,.9)}
-    .admin-empty{text-align:center;padding:24px;font-size:13px;color:rgba(240,190,100,.35)}
+    .s-title{font-family:'Noto Serif Hebrew',serif;font-size:24px;font-weight:900;color:#8a5e08;margin-bottom:10px}
+    .s-sub{font-size:15px;color:#b07030;line-height:1.65}
+    .again-btn{margin-top:24px;background:none;border:1px solid rgba(200,144,10,.35);color:#a06010;border-radius:12px;padding:10px 22px;font-size:14px;cursor:pointer;font-family:'Rubik',sans-serif;transition:border-color .15s}
+    .again-btn:hover{border-color:rgba(200,144,10,.65)}
   </style>
 </head>
 <body>
@@ -83,8 +84,8 @@
   <div class="container">
     <div class="header">
       <span class="sparkle">✦ ✦ ✦</span>
-      <h1 class="main-title">ספרון ברכות לזאב</h1>
-      <p class="subtitle">הוסיפו ברכה, תמונה או סרטון<br>ביחד נכין לזאב מתנה מהלב ♥</p>
+      <h1 class="main-title">ספרון ברכות לזאבי</h1>
+      <p class="subtitle">הוסיפו ברכה, תמונה או סרטון<br>ביחד נכין לזאבי מתנה מהלב ♥</p>
     </div>
 
     <div id="form-wrap">
@@ -95,8 +96,8 @@
           <div class="err" id="name-err">נא להזין שם</div>
         </div>
         <div class="field">
-          <label for="msg">ברכה לזאב</label>
-          <textarea id="msg" placeholder="כתבו כמה מילים לזאב..." maxlength="600"></textarea>
+          <label for="msg">ברכה לזאבי</label>
+          <textarea id="msg" placeholder="כתבו כמה מילים לזאבי..." maxlength="600"></textarea>
         </div>
         <div class="field">
           <label>תמונה או סרטון (אופציונלי)</label>
@@ -117,7 +118,6 @@
     </div>
 
     <button class="admin-toggle" onclick="toggleAdmin()">ניהול ←</button>
-
     <div class="admin-panel" id="admin-panel">
       <div class="admin-head">
         <span class="admin-title">ברכות שהתקבלו</span>
@@ -129,14 +129,14 @@
     <div class="success" id="success">
       <span class="s-star">✨</span>
       <h2 class="s-title">הברכה נשלחה!</h2>
-      <p class="s-sub">תודה שהצטרפת לספרון של זאב ♥<br>הברכה שלך תהיה חלק מהמתנה</p>
+      <p class="s-sub">תודה שהצטרפת לספרון של זאבי ♥<br>הברכה שלך תהיה חלק מהמתנה</p>
       <button class="again-btn" onclick="resetForm()">הוסף ברכה נוספת</button>
     </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="zeev.js?v=1"></script>
+<script src="zeev.js?v=2"></script>
 <script>
   let selectedFile = null;
 
@@ -168,10 +168,7 @@
     const btn  = document.getElementById('sub-btn');
     ne.style.display = name ? 'none' : 'block';
     if(!name) return;
-    if(!msg && !selectedFile){
-      se.textContent = 'אנא הוסיפו ברכה או תמונה';
-      se.style.display = 'block'; return;
-    }
+    if(!msg && !selectedFile){ se.textContent='אנא הוסיפו ברכה או תמונה'; se.style.display='block'; return; }
     se.style.display = 'none';
     btn.disabled = true; btn.textContent = 'שולח...';
     try {
@@ -179,62 +176,8 @@
       document.getElementById('form-wrap').style.display = 'none';
       document.getElementById('success').style.display = 'block';
     } catch(e) {
-      se.textContent = 'שגיאה: ' + e.message;
-      se.style.display = 'block';
+      se.textContent = 'שגיאה: ' + e.message; se.style.display = 'block';
       btn.disabled = false; btn.textContent = 'שלח ברכה ✦';
-    }
-  }
-
-  let adminOpen = false;
-
-  async function toggleAdmin(){
-    adminOpen = !adminOpen;
-    const panel = document.getElementById('admin-panel');
-    panel.style.display = adminOpen ? 'block' : 'none';
-    if(adminOpen) await refreshAdmin();
-  }
-
-  async function refreshAdmin(){
-    const list = document.getElementById('admin-list');
-    list.innerHTML = '<div class="admin-loading">טוען...</div>';
-    try{
-      const rows = await ZeevApp.loadBlessings();
-      document.getElementById('admin-count').textContent = rows.length + ' ברכות';
-      if(!rows.length){ list.innerHTML = '<div class="admin-empty">אין עדיין ברכות</div>'; return; }
-      list.innerHTML = '';
-      rows.forEach(b => {
-        const row = document.createElement('div');
-        row.className = 'admin-row'; row.id = 'row-' + b.id;
-        const thumb = b.media_url && b.media_type === 'image'
-          ? `<img class="admin-thumb" src="${b.media_url}" alt="">`
-          : `<div class="admin-thumb-empty">${b.media_url ? '🎬' : '✦'}</div>`;
-        row.innerHTML = `${thumb}
-          <div class="admin-info">
-            <div class="admin-name">${b.name}</div>
-            <div class="admin-msg">${b.message || '(ללא טקסט)'}</div>
-          </div>
-          <button class="admin-del" onclick="doDelete('${b.id}','${b.media_url||''}')">מחק</button>`;
-        list.appendChild(row);
-      });
-    }catch(e){
-      list.innerHTML = '<div class="admin-empty">שגיאה: ' + e.message + '</div>';
-    }
-  }
-
-  async function doDelete(id, mediaUrl){
-    if(!confirm('למחוק את הברכה?')) return;
-    const btn = document.querySelector(`#row-${id} .admin-del`);
-    if(btn){ btn.disabled = true; btn.textContent = '...'; }
-    try{
-      await ZeevApp.deleteBlessing(id, mediaUrl || null);
-      const row = document.getElementById('row-' + id);
-      if(row) row.remove();
-      const remaining = document.querySelectorAll('.admin-row').length;
-      document.getElementById('admin-count').textContent = remaining + ' ברכות';
-      if(!remaining) document.getElementById('admin-list').innerHTML = '<div class="admin-empty">אין עדיין ברכות</div>';
-    }catch(e){
-      alert('שגיאה: ' + e.message);
-      if(btn){ btn.disabled = false; btn.textContent = 'מחק'; }
     }
   }
 
@@ -248,6 +191,55 @@
     document.getElementById('sub-btn').textContent = 'שלח ברכה ✦';
     document.getElementById('form-wrap').style.display = 'block';
     document.getElementById('success').style.display = 'none';
+  }
+
+  let adminOpen = false;
+  async function toggleAdmin(){
+    adminOpen = !adminOpen;
+    const panel = document.getElementById('admin-panel');
+    panel.style.display = adminOpen ? 'block' : 'none';
+    if(adminOpen) await refreshAdmin();
+  }
+
+  async function refreshAdmin(){
+    const list = document.getElementById('admin-list');
+    list.innerHTML = '<div class="admin-loading">טוען...</div>';
+    try{
+      const rows = await ZeevApp.loadBlessings();
+      document.getElementById('admin-count').textContent = rows.length + ' ברכות';
+      if(!rows.length){ list.innerHTML='<div class="admin-empty">אין עדיין ברכות</div>'; return; }
+      list.innerHTML = '';
+      rows.forEach(b => {
+        const row = document.createElement('div');
+        row.className = 'admin-row'; row.id = 'row-' + b.id;
+        const thumb = b.media_url && b.media_type==='image'
+          ? `<img class="admin-thumb" src="${b.media_url}" alt="">`
+          : `<div class="admin-thumb-empty">${b.media_url?'🎬':'✦'}</div>`;
+        row.innerHTML = `${thumb}
+          <div class="admin-info">
+            <div class="admin-name">${b.name}</div>
+            <div class="admin-msg">${b.message||'(ללא טקסט)'}</div>
+          </div>
+          <button class="admin-del" onclick="doDelete('${b.id}','${b.media_url||''}')">מחק</button>`;
+        list.appendChild(row);
+      });
+    }catch(e){ list.innerHTML='<div class="admin-empty">שגיאה: '+e.message+'</div>'; }
+  }
+
+  async function doDelete(id, mediaUrl){
+    if(!confirm('למחוק את הברכה?')) return;
+    const btn = document.querySelector(`#row-${id} .admin-del`);
+    if(btn){ btn.disabled=true; btn.textContent='...'; }
+    try{
+      await ZeevApp.deleteBlessing(id, mediaUrl||null);
+      document.getElementById('row-'+id)?.remove();
+      const rem = document.querySelectorAll('.admin-row').length;
+      document.getElementById('admin-count').textContent = rem + ' ברכות';
+      if(!rem) document.getElementById('admin-list').innerHTML='<div class="admin-empty">אין עדיין ברכות</div>';
+    }catch(e){
+      alert('שגיאה: '+e.message);
+      if(btn){ btn.disabled=false; btn.textContent='מחק'; }
+    }
   }
 </script>
 </body>
