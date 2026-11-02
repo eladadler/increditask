@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="55%" r="75%">
+      <stop offset="0%" stop-color="#1e0840"/>
+      <stop offset="100%" stop-color="#040010"/>
+    </radialGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffd700" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#ffd700" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <!-- center glow -->
+  <ellipse cx="600" cy="315" rx="500" ry="260" fill="url(#glow)"/>
+
+  <!-- gold border frame -->
+  <rect x="24" y="24" width="1152" height="582" rx="20" fill="none"
+        stroke="#ffd700" stroke-width="2" stroke-opacity="0.35"/>
+
+  <!-- decorative stars scattered -->
+  <g fill="#ffd700" opacity="0.55">
+    <circle cx="80"  cy="80"  r="3"/>
+    <circle cx="160" cy="48"  r="2"/>
+    <circle cx="240" cy="100" r="4"/>
+    <circle cx="340" cy="55"  r="2.5"/>
+    <circle cx="440" cy="30"  r="3"/>
+    <circle cx="760" cy="30"  r="3"/>
+    <circle cx="860" cy="60"  r="2.5"/>
+    <circle cx="960" cy="45"  r="4"/>
+    <circle cx="1050" cy="90" r="2"/>
+    <circle cx="1120" cy="65" r="3"/>
+    <circle cx="60"  cy="560" r="3"/>
+    <circle cx="150" cy="585" r="2"/>
+    <circle cx="280" cy="570" r="4"/>
+    <circle cx="900" cy="575" r="3"/>
+    <circle cx="1020" cy="555" r="2.5"/>
+    <circle cx="1130" cy="580" r="3"/>
+    <circle cx="70"  cy="310" r="2"/>
+    <circle cx="1140" cy="280" r="2.5"/>
+  </g>
+  <!-- small diamond shapes -->
+  <g fill="#ffd700" opacity="0.4">
+    <polygon points="400,22  406,30  400,38  394,30"/>
+    <polygon points="800,20  806,28  800,36  794,28"/>
+    <polygon points="200,600 206,608 200,616 194,608"/>
+    <polygon points="1000,608 1006,616 1000,624 994,616"/>
+  </g>
+
+  <!-- "✦" decorative top -->
+  <text x="600" y="118" text-anchor="middle" font-family="serif"
+        font-size="28" fill="#ffd700" opacity="0.7">✦ ✦ ✦</text>
+
+  <!-- BIG "35" -->
+  <text x="600" y="285" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="200" font-weight="900"
+        fill="#ffd700"
+        filter="url(#shadow)">35</text>
+
+  <!-- gold shadow under 35 -->
+  <text x="603" y="288" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="200" font-weight="900"
+        fill="#7a4000" opacity="0.3">35</text>
+  <text x="600" y="285" text-anchor="middle"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-size="200" font-weight="900"
+        fill="#ffd700">35</text>
+
+  <!-- "יום הולדת שמח" -->
+  <text x="600" y="375" text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="52" font-weight="700"
+        fill="#e8d0ff"
+        direction="rtl">יום הולדת שמח</text>
+
+  <!-- "זאבי!" big -->
+  <text x="600" y="455" text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="88" font-weight="900"
+        fill="#ffffff"
+        direction="rtl">זאבי!</text>
+
+  <!-- subtitle -->
+  <text x="600" y="528" text-anchor="middle"
+        font-family="Arial, sans-serif"
+        font-size="30"
+        fill="#c3a5ff" opacity="0.8"
+        direction="rtl">✨ יש לך הפתעה מיוחדת מכל חבריך ✨</text>
+
+  <!-- bottom sparkle -->
+  <text x="600" y="578" text-anchor="middle" font-family="serif"
+        font-size="20" fill="#ffd700" opacity="0.5">✦ ✦ ✦</text>
+</svg>
