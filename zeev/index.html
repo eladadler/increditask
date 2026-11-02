@@ -3,7 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>ברכה לזאבי ✦</title>
+  <title>🎉 שלח ברכה לזאבי — יום הולדת 35!</title>
+  <meta property="og:title" content="🎉 שלח ברכה לזאבי — יום הולדת 35!">
+  <meta property="og:description" content="כתוב לו ברכה, שלח תמונה ישנה, סרטון מצחיק — ביחד נפתיע אותו ♥">
+  <meta property="og:image" content="https://eladadler.github.io/increditask/zeev/og-form.svg">
+  <meta property="og:url" content="https://eladadler.github.io/increditask/zeev/index.html">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Noto+Serif+Hebrew:wght@400;700;900&display=swap" rel="stylesheet">
@@ -15,10 +21,19 @@
     .page{min-height:100dvh;display:flex;align-items:flex-start;justify-content:center;padding:36px 16px 56px}
     .container{width:100%;max-width:460px}
 
-    .header{text-align:center;margin-bottom:32px}
-    .sparkle{font-size:18px;color:#c8900a;letter-spacing:10px;opacity:.7;display:block;margin-bottom:14px}
-    .main-title{font-family:'Noto Serif Hebrew',serif;font-size:26px;font-weight:900;color:#8a5e08;line-height:1.35;margin-bottom:8px}
-    .subtitle{font-size:15px;color:#b07830;opacity:.75;line-height:1.65}
+    /* confetti dots */
+    #confetti-form{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .fdot{position:absolute;border-radius:50%;animation:ftwinkle var(--d,3s) ease-in-out infinite alternate}
+    @keyframes ftwinkle{from{opacity:.04}to{opacity:.22}}
+
+    .header{position:relative;z-index:1;text-align:center;margin-bottom:32px;padding-top:8px}
+    .sparkle{font-size:18px;color:#c8900a;letter-spacing:10px;opacity:.7;display:block;margin-bottom:18px}
+    .main-title{font-family:'Noto Serif Hebrew',serif;font-size:clamp(28px,8vw,40px);font-weight:900;color:#8a5e08;line-height:1.2;margin-bottom:10px}
+    .hero-num{font-family:'Noto Serif Hebrew',serif;font-size:clamp(52px,16vw,80px);font-weight:900;color:#c8900a;line-height:1;display:block;text-shadow:0 3px 20px rgba(200,144,10,.2);margin-bottom:10px}
+    .subtitle{font-size:15px;color:#b07830;opacity:.8;line-height:1.7}
+    .invite-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px;margin-bottom:4px}
+    .pill{background:rgba(200,144,10,.1);border:1px solid rgba(200,144,10,.25);color:#a06010;border-radius:20px;padding:6px 14px;font-size:13px;font-weight:500}
+    .divider{width:50px;height:2px;background:linear-gradient(90deg,transparent,rgba(200,144,10,.35),transparent);margin:20px auto 0}
 
     .card{background:#fff;border:1px solid rgba(200,144,10,.2);border-radius:20px;padding:26px 22px;box-shadow:0 4px 24px rgba(180,120,20,.08)}
 
@@ -80,12 +95,20 @@
   </style>
 </head>
 <body>
+<div id="confetti-form"></div>
 <div class="page">
   <div class="container">
     <div class="header">
       <span class="sparkle">✦ ✦ ✦</span>
-      <h1 class="main-title">ספרון ברכות לזאבי</h1>
-      <p class="subtitle">הוסיפו ברכה, תמונה או סרטון<br>ביחד נכין לזאבי מתנה מהלב ♥</p>
+      <h1 class="main-title">זאבי חוגג</h1>
+      <span class="hero-num">35 🎉</span>
+      <p class="subtitle">ואנחנו מכינים לו הפתעה מהלב!<br>כתוב לו כמה מילים, שלח תמונה ישנה<br>או סרטון מצחיק שיגרום לו לחייך 😄</p>
+      <div class="invite-pills">
+        <span class="pill">✍️ ברכה</span>
+        <span class="pill">📸 תמונה</span>
+        <span class="pill">🎬 סרטון</span>
+      </div>
+      <div class="divider"></div>
     </div>
 
     <div id="form-wrap">
@@ -138,6 +161,18 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="zeev.js?v=2"></script>
 <script>
+  /* confetti */
+  (function(){
+    const c=document.getElementById('confetti-form');
+    const colors=['#c8900a','#e8b820','#d4a830','#f0cc60','#a07020'];
+    for(let i=0;i<40;i++){
+      const d=document.createElement('div'); d.className='fdot';
+      const sz=2+Math.random()*3;
+      d.style.cssText=`left:${Math.random()*100}vw;top:${Math.random()*100}vh;width:${sz}px;height:${sz}px;background:${colors[i%colors.length]};--d:${2+Math.random()*5}s;animation-delay:${Math.random()*5}s`;
+      c.appendChild(d);
+    }
+  })();
+
   let selectedFile = null;
 
   document.getElementById('file').addEventListener('change', function(e){
