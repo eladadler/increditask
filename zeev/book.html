@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>יום הולדת שמח זאב ✦</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600&family=Noto+Serif+Hebrew:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{min-height:100dvh}
+    body{font-family:'Rubik',sans-serif;background:#0b0705;color:#f0dfc0;direction:rtl;overflow-x:hidden}
+
+    /* ---- stars ---- */
+    #stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+    .star{position:absolute;background:#f5c842;border-radius:50%;animation:twinkle var(--d,3s) ease-in-out infinite alternate}
+    @keyframes twinkle{from{opacity:.05;transform:scale(1)}to{opacity:.55;transform:scale(1.4)}}
+
+    /* ---- hero ---- */
+    .hero{position:relative;z-index:1;text-align:center;padding:60px 20px 48px}
+    .hero-sparkle{font-size:18px;color:#f5c842;letter-spacing:12px;opacity:.65;display:block;margin-bottom:18px}
+    .hero-title{font-family:'Noto Serif Hebrew',serif;font-size:clamp(28px,7vw,52px);font-weight:900;color:#f5c842;line-height:1.2;margin-bottom:10px;text-shadow:0 0 60px rgba(245,200,60,.25)}
+    .hero-name{font-family:'Noto Serif Hebrew',serif;font-size:clamp(42px,11vw,80px);font-weight:900;color:#f9e060;line-height:1;margin-bottom:16px;text-shadow:0 0 80px rgba(249,224,96,.35)}
+    .hero-sub{font-size:15px;color:rgba(240,200,130,.5);letter-spacing:.5px}
+    .hero-line{display:block;width:60px;height:1px;background:linear-gradient(90deg,transparent,rgba(245,200,60,.4),transparent);margin:20px auto 0}
+
+    /* ---- cards grid ---- */
+    .grid-wrap{position:relative;z-index:1;padding:0 16px 60px;max-width:1100px;margin:0 auto}
+    .grid{columns:1;column-gap:18px}
+    @media(min-width:520px){.grid{columns:2}}
+    @media(min-width:820px){.grid{columns:3}}
+
+    .card{break-inside:avoid;margin-bottom:18px;background:rgba(245,200,60,.05);border:1px solid rgba(245,200,60,.14);border-radius:18px;overflow:hidden;animation:fadeUp .5s ease both}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+    .card-media{width:100%;display:block;object-fit:cover;max-height:300px}
+    video.card-media{max-height:280px;background:#0a0604}
+    .card-media-wrap{overflow:hidden;border-radius:0}
+
+    .card-body{padding:16px 16px 18px}
+    .card-name{font-family:'Noto Serif Hebrew',serif;font-size:15px;font-weight:700;color:#f5c842;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .card-name::before{content:'✦';font-size:9px;opacity:.7}
+    .card-msg{font-size:14.5px;line-height:1.7;color:rgba(240,210,160,.82);white-space:pre-wrap;word-break:break-word}
+
+    /* ---- loading & empty ---- */
+    .loader{position:relative;z-index:1;text-align:center;padding:80px 20px;color:rgba(245,200,60,.5)}
+    .loader-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#f5c842;margin:0 4px;animation:bounce 1.2s ease-in-out infinite}
+    .loader-dot:nth-child(2){animation-delay:.2s}
+    .loader-dot:nth-child(3){animation-delay:.4s}
+    @keyframes bounce{0%,80%,100%{transform:scale(.7);opacity:.4}40%{transform:scale(1.1);opacity:1}}
+
+    .empty{position:relative;z-index:1;text-align:center;padding:60px 20px;color:rgba(240,200,130,.4);font-size:15px}
+  </style>
+</head>
+<body>
+<div id="stars"></div>
+
+<div class="hero">
+  <span class="hero-sparkle">✦ ✦ ✦</span>
+  <div class="hero-title">יום הולדת שמח</div>
+  <div class="hero-name">זאב</div>
+  <div class="hero-sub">מאוהביו ומחבריו</div>
+  <span class="hero-line"></span>
+</div>
+
+<div id="loader" class="loader">
+  <div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div>
+</div>
+<div class="grid-wrap" id="grid-wrap" style="display:none">
+  <div class="grid" id="grid"></div>
+</div>
+<div class="empty" id="empty" style="display:none">עוד אין ברכות — הן בדרך ✦</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="zeev.js?v=1"></script>
+<script>
+  /* stars */
+  (function(){
+    const c = document.getElementById('stars');
+    for(let i=0;i<70;i++){
+      const s = document.createElement('div');
+      s.className = 'star';
+      const sz = .8 + Math.random()*2.2;
+      s.style.cssText = `left:${Math.random()*100}vw;top:${Math.random()*100}vh;width:${sz}px;height:${sz}px;--d:${2+Math.random()*4}s;animation-delay:${Math.random()*5}s`;
+      c.appendChild(s);
+    }
+  })();
+
+  /* shuffle */
+  function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=0|Math.random()*(i+1);[a[i],a[j]]=[a[j],a[i]]} return a; }
+
+  function renderCard(b, delay){
+    const wrap = document.createElement('div');
+    wrap.className = 'card';
+    wrap.style.animationDelay = delay + 'ms';
+    if(b.media_url){
+      const mw = document.createElement('div');
+      mw.className = 'card-media-wrap';
+      if(b.media_type === 'video'){
+        const v = document.createElement('video');
+        v.className = 'card-media'; v.src = b.media_url;
+        v.setAttribute('muted',''); v.setAttribute('playsinline',''); v.setAttribute('controls','');
+        v.setAttribute('preload','metadata');
+        mw.appendChild(v);
+      } else {
+        const img = document.createElement('img');
+        img.className = 'card-media'; img.src = b.media_url;
+        img.alt = 'תמונה מ-' + b.name; img.loading = 'lazy';
+        mw.appendChild(img);
+      }
+      wrap.appendChild(mw);
+    }
+    const body = document.createElement('div');
+    body.className = 'card-body';
+    const name = document.createElement('div');
+    name.className = 'card-name'; name.textContent = b.name;
+    body.appendChild(name);
+    if(b.message){
+      const msg = document.createElement('div');
+      msg.className = 'card-msg'; msg.textContent = b.message;
+      body.appendChild(msg);
+    }
+    wrap.appendChild(body);
+    return wrap;
+  }
+
+  async function load(){
+    try {
+      const data = shuffle(await ZeevApp.loadBlessings());
+      document.getElementById('loader').style.display = 'none';
+      if(!data.length){
+        document.getElementById('empty').style.display = 'block'; return;
+      }
+      const grid = document.getElementById('grid');
+      grid.innerHTML = '';
+      data.forEach((b,i) => grid.appendChild(renderCard(b, i*60)));
+      document.getElementById('grid-wrap').style.display = 'block';
+    } catch(e){
+      document.getElementById('loader').innerHTML = '<span style="color:rgba(255,130,100,.7);font-size:14px">שגיאה בטעינה: ' + e.message + '</span>';
+    }
+  }
+
+  load();
+  setInterval(load, 60000);
+</script>
+</body>
+</html>
