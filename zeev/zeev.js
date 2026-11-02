@@ -30,5 +30,16 @@
     return data;
   }
 
-  window.ZeevApp = { addBlessing, loadBlessings };
+  async function deleteBlessing(id, mediaUrl){
+    if(mediaUrl){
+      try{
+        const path = decodeURIComponent(mediaUrl.split('/zeev-media/')[1]);
+        await sb.storage.from(BUCKET).remove([path]);
+      }catch(e){ console.warn('media delete failed', e); }
+    }
+    const { error } = await sb.from(TABLE).delete().eq('id', id);
+    if(error) throw error;
+  }
+
+  window.ZeevApp = { addBlessing, loadBlessings, deleteBlessing };
 })();
